@@ -1,10 +1,5 @@
 #include "reknote.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QAction>
-
 Reknote::Reknote()
 {
   ui.setupUi(this);

@@ -1,7 +1,7 @@
 #ifndef reknote_H
 #define reknote_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 #include "ui_reknote.h"
 
