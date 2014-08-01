@@ -12,6 +12,9 @@ Reknote::Reknote() {
   ui.treeView->setDragDropMode(QAbstractItemView::InternalMove);
   connect(ui.pushButton, SIGNAL(pressed()), this, SLOT(tmpAdd()));
   connect(ui.treeView, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+  
+  connect(ui.loadbutton, SIGNAL(pressed()), sm_, SLOT(load()));
+  connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
   tmpi = 0;
   /*  QLabel* l = new QLabel( this );
     l->setText( "Hello World!" );

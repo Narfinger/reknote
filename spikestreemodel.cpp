@@ -20,6 +20,10 @@
  *
  */
 
+#include <QDir>
+#include <QTextStream>
+#include <qt4/QtCore/qshareddata.h>
+
 #include "spikestreemodel.h"
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
@@ -38,13 +42,31 @@ SpikesTreeModel::~SpikesTreeModel() {
 
 void SpikesTreeModel::load() {
   QString path = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0);
-  QFile xmlfile(path+"/spikes.xml");
+  QFile file(path+"/spikestree.xml");
+  if (!file.exists()) return;
+  
+  file.open(QIODevice::ReadOnly);
+  QTextStream out;
+  out.setDevice(&file);
+  
+  QDomDocument doc;
+  QString error;
+  int errorline;
+  int errorcolumn;
+  doc.setContent(&file, false, &error, &errorline, &errorcolumn);
+  QDomNodeList spikelist = doc.elementsByTagName("spikes").at(0).childNodes();
+  
+  qDebug() << spikelist.at(0).nodeName();
+  loadXml(spikelist, invisibleRootItem());
+  
+  out.flush();
+  file.close();
 }
 
 void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
-  for(int i= 0; i< list.size(); ++i) {
+  for(int i=0; i< list.size(); ++i) {
     const QDomNode node(list.at(i));
-    QString text = node.attributes().namedItem("name").toText().data();
+    QString text = node.attributes().namedItem("name").toAttr().value();
     QStandardItem* it = new QStandardItem(text);
     parentItem->appendRow(it);
     
@@ -54,6 +76,37 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     }
   }
 }
+
+void SpikesTreeModel::save() {
+  QString path = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0);
+  QDir dir(path);
+  if (!dir.exists()) QDir().mkdir(path);
+  QFile file(path +"/spikestree.xml");
+  file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+  QTextStream out(&file);
+    
+  QDomDocument d("spikes");
+  QDomElement e = d.createElement("spikes");
+  saveChildrenToXml(d, e, invisibleRootItem());
+  d.appendChild(e);
+  
+  out << d.toString();
+  out.flush();  
+  file.close();
+}
+
+void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) {
+  if (item->hasChildren()) {
+    for(int i=0; i< item->rowCount(); ++i) {
+      QStandardItem* it = item->child(i);
+      QDomElement e = d.createElement("spike");
+      e.setAttribute("name", it->text());
+      elem.appendChild(e);
+      saveChildrenToXml(d, e, item->child(i));
+    }
+  }
+}
+
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
   if (!index.isValid()) return 0;

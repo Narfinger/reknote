@@ -36,12 +36,16 @@ class SpikesTreeModel : public QStandardItemModel
 public:  
     SpikesTreeModel(QObject *parent = 0);
     ~SpikesTreeModel();
-    
-    void load();
-    void loadXml(QDomNodeList& list, QStandardItem* parentItem);
+   
+    void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
+    void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item);
     
     Qt::ItemFlags flags(const QModelIndex &index) const;
     Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
+    
+public slots:
+  void load();
+  void save();
 };
 
 #endif // SPIKESTREEMODEL_H

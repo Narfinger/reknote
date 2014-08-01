@@ -14,16 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTreeView" name="treeView">
-    <property name="geometry">
-     <rect>
-      <x>5</x>
-      <y>11</y>
-      <width>261</width>
-      <height>381</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
@@ -40,14 +30,64 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>120</y>
+      <x>270</x>
+      <y>400</y>
       <width>321</width>
       <height>141</height>
      </rect>
     </property>
     <property name="text">
      <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QSplitter" name="splitter">
+    <property name="geometry">
+     <rect>
+      <x>-5</x>
+      <y>0</y>
+      <width>671</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="handleWidth">
+     <number>3</number>
+    </property>
+    <property name="childrenCollapsible">
+     <bool>true</bool>
+    </property>
+    <widget class="QTreeView" name="treeView"/>
+    <widget class="QListView" name="listView"/>
+   </widget>
+   <widget class="QPushButton" name="savebutton">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>490</y>
+      <width>95</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>savetmp</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="loadbutton">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>490</y>
+      <width>95</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>load</string>
     </property>
    </widget>
   </widget>
