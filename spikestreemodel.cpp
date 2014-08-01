@@ -20,9 +20,9 @@
  *
  */
 
-#include "spikesmodel.h"
+#include "spikestreemodel.h"
 
-SpikesModel::SpikesModel(QObject* parent) : QStandardItemModel(parent) {
+SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
   QStandardItem* parentItem = this->invisibleRootItem();
   /*for (int i=0; i<4; ++i) {
     QStandardItem* item = new QStandardItem(QString("item %1").arg(i));
@@ -33,15 +33,15 @@ SpikesModel::SpikesModel(QObject* parent) : QStandardItemModel(parent) {
   }*/
 }
 
-SpikesModel::~SpikesModel() {
+SpikesTreeModel::~SpikesTreeModel() {
 }
 
-void SpikesModel::load() {
+void SpikesTreeModel::load() {
   QString path = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0);
   QFile xmlfile(path+"/spikes.xml");
 }
 
-void SpikesModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
+void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
   for(int i= 0; i< list.size(); ++i) {
     const QDomNode node(list.at(i));
     QString text = node.attributes().namedItem("name").toText().data();
@@ -55,7 +55,7 @@ void SpikesModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
   }
 }
 
-Qt::ItemFlags SpikesModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
   if (!index.isValid()) return 0;
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
   

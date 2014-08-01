@@ -6,13 +6,13 @@
 
 #include "ui_reknote.h"
 
-class SpikesModel;
+class SpikesTreeModel;
 
 class Reknote : public QMainWindow {
 Q_OBJECT
 private:
   Ui::MainWindow ui;
-  SpikesModel* sm_;
+  SpikesTreeModel* sm_;
   int tmpi;
 
 public:

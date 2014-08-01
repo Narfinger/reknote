@@ -1,12 +1,12 @@
 #include "reknote.h"
-#include "spikesmodel.h"
+#include "spikestreemodel.h"
 
 #include <QTreeWidgetItem>
 
 Reknote::Reknote() {
   ui.setupUi(this);
   
-  sm_ = new SpikesModel(this);
+  sm_ = new SpikesTreeModel(this);
   ui.treeView->setModel(sm_);
   ui.treeView->expandAll();
   ui.treeView->setDragDropMode(QAbstractItemView::InternalMove);
