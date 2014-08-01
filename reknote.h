@@ -2,16 +2,18 @@
 #define reknote_H
 
 #include <QMainWindow>
+#include <QModelIndex>
 
 #include "ui_reknote.h"
 
-class SpikeModel;
+class SpikesModel;
 
 class Reknote : public QMainWindow {
 Q_OBJECT
 private:
   Ui::MainWindow ui;
-  SpikeModel* sm_;
+  SpikesModel* sm_;
+  int tmpi;
 
 public:
     Reknote();
@@ -19,6 +21,7 @@ public:
     
 private slots:
     void tmpAdd();
+    void activated(QModelIndex i);
 };
 
 #endif // reknote_H

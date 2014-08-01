@@ -9,7 +9,7 @@ set(CMAKE_AUTOMOC ON)
 
 
 set(reknote_SRCS 
-  spikemodel.cpp 
+  spikesmodel.cpp 
   reknote.cpp 
   main.cpp
 )

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SPIKEMODEL_H
-#define SPIKEMODEL_H
+#ifndef SPIKESMODEL_H
+#define SPIKESMODEL_H
 
 #include <QtXml/QDomNodeList>
 #include <QStandardItemModel>
@@ -29,23 +29,19 @@
 #include <QtXml/QtXml>
 
 
-class SpikeModel : public QStandardItemModel
+class SpikesModel : public QStandardItemModel
 {
     Q_OBJECT
 
-public:
-    SpikeModel(QObject *parent = 0);
-    ~SpikeModel();
+public:  
+    SpikesModel(QObject *parent = 0);
+    ~SpikesModel();
     
     void load();
     void loadXml(QDomNodeList& list, QStandardItem* parentItem);
     
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };
-
-private:
-  QList<QList<QString> > list_;
-  
+    Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
 };
 
-#endif // SPIKEMODEL_H
+#endif // SPIKESMODEL_H
