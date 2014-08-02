@@ -20,10 +20,15 @@
  *
  */
 
-#include "spike.h"
+#include "spiketreeitem.h"
 
-
-Qt::ItemFlags Spike::flags ( const QModelIndex& index ) const {
-  if (!index.isValid()) return 0;
-  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+#include <QDebug>
+QStandardItem* SpikeTreeItem::clone() const {
+  SpikeTreeItem* sti = new SpikeTreeItem();
+  SpikePtr np(this->m_);
+  sti->m_ = np;
+  sti->mm_ = this->mm_;
+  qDebug() << "called";
+  return sti;
 }
+

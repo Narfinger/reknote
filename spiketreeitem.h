@@ -20,10 +20,24 @@
  *
  */
 
+#ifndef SPIKETREEITEM_H
+#define SPIKETREEITEM_H
+
+#include <QObject>
+#include <QStandardItem>
+
 #include "spike.h"
 
+class SpikeTreeItem : public QStandardItem {
 
-Qt::ItemFlags Spike::flags ( const QModelIndex& index ) const {
-  if (!index.isValid()) return 0;
-  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-}
+public:
+  SpikeTreeItem() : QStandardItem() {};
+  SpikeTreeItem(QString t): QStandardItem(t) {};
+  virtual QStandardItem* clone() const;
+
+  SpikePtr m_;
+  Spike* mm_;
+private:
+};
+
+#endif // SPIKETREEITEM_H

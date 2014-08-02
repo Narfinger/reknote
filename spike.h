@@ -23,16 +23,19 @@
 #ifndef SPIKE_H
 #define SPIKE_H
 
-#include <qt4/QtCore/qobject.h>
+#include <QSharedPointer>
+#include <QStandardItemModel>
 
-class Spike : public QObject {
+class Spike : public QStandardItemModel {
     Q_OBJECT
-
 public:
-    Spike();
-    ~Spike();
+  Spike(QObject* parent = 0): QStandardItemModel(parent) {};
+  Qt::ItemFlags flags(const QModelIndex &index) const;
 
 private:
+  
 };
+
+typedef QSharedPointer<Spike> SpikePtr;
 
 #endif // SPIKE_H

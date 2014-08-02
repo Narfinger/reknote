@@ -20,10 +20,19 @@
  *
  */
 
-#include "spike.h"
+#ifndef NOTEVIEW_H
+#define NOTEVIEW_H
 
+#include <QListView>
 
-Qt::ItemFlags Spike::flags ( const QModelIndex& index ) const {
-  if (!index.isValid()) return 0;
-  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-}
+class NoteView : public QListView {
+    Q_OBJECT
+
+public:
+    NoteView(QWidget* parent = 0);
+    ~NoteView();
+
+private:
+};
+
+#endif // NOTEVIEW_H

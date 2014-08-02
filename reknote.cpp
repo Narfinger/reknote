@@ -1,12 +1,16 @@
-#include "reknote.h"
-#include "spikestreemodel.h"
-
 #include <QTreeWidgetItem>
+#include <QListView>
+
+#include "reknote.h"
+#include "spike.h"
+#include "spikestreemodel.h"
+#include "spiketreeitem.h"
 
 Reknote::Reknote() {
   ui.setupUi(this);
   
   sm_ = new SpikesTreeModel(this);
+  sm_->setItemPrototype(new SpikeTreeItem());
   ui.treeView->setModel(sm_);
   ui.treeView->expandAll();
   ui.treeView->setDragDropMode(QAbstractItemView::InternalMove);
@@ -15,6 +19,7 @@ Reknote::Reknote() {
   
   connect(ui.loadbutton, SIGNAL(pressed()), sm_, SLOT(load()));
   connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
+  
   tmpi = 0;
   /*  QLabel* l = new QLabel( this );
     l->setText( "Hello World!" );
@@ -30,16 +35,33 @@ Reknote::~Reknote() {
 }
 
 void Reknote::tmpAdd() {
-  QStandardItem* i = new QStandardItem("tmp");
-  i->setData(QVariant(tmpi));
+  SpikeTreeItem* i = new SpikeTreeItem("tmp");
+  
+  //SpikePtr s( new Spike());
+  
+  Spike* s = new Spike();
+  int x = tmpi;
+  for(; x< tmpi+5; x++) {
+    QString number = QString::number(x);
+        
+    QStandardItem* t = new QStandardItem(number);
+    s->appendRow(t);
+  }
+  //i->m_ = s;
+  i->mm_ = s;
+  
   sm_->appendRow(i);
   tmpi++;
   
 }
 
 void Reknote::activated ( QModelIndex i ) {
-  QString tmp = sm_->data(i, Qt::UserRole+1).toString();
-  ui.label->setText(tmp);
+  SpikeTreeItem* sti = static_cast<SpikeTreeItem*>(sm_->itemFromIndex(i));
+  qDebug() << sti->rowCount() << sti->columnCount();
+  /*SpikePtr p = sti->m_;
+  Spike* s = p.data();
+  */
+  Spike* s = sti->mm_;
+  
+  ui.listView->setModel(s);
 }
-
-

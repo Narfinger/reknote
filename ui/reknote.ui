@@ -62,7 +62,7 @@
      <bool>true</bool>
     </property>
     <widget class="QTreeView" name="treeView"/>
-    <widget class="QListView" name="listView"/>
+    <widget class="NoteView" name="listView"/>
    </widget>
    <widget class="QPushButton" name="savebutton">
     <property name="geometry">
@@ -90,6 +90,16 @@
      <string>load</string>
     </property>
    </widget>
+   <widget class="QListView" name="blistview">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>410</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -103,6 +113,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NoteView</class>
+   <extends>QListView</extends>
+   <header>noteview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
