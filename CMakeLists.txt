@@ -9,6 +9,7 @@ set(CMAKE_AUTOMOC ON)
 
 
 set(reknote_SRCS 
+  noteitemdelegate.cpp 
   noteview.cpp 
   spike.cpp 
   spikestreemodel.cpp 

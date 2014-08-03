@@ -58,7 +58,6 @@ void Reknote::tmpDelete() {
   sm_->removeItemAtIndex(i);
 }
 
-
 void Reknote::activated ( QModelIndex i ) {
   SpikePtr p = sm_->getPointerFromIndex(i);
   ui.listView->setModel(p.data());

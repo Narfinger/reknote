@@ -20,22 +20,19 @@
  *
  */
 
-#ifndef NOTEVIEW_H
-#define NOTEVIEW_H
+#ifndef NOTEITEMDELEGATE_H
+#define NOTEITEMDELEGATE_H
 
-#include <QListView>
-#include <QMouseEvent>
+#include <QStyledItemDelegate>
 
-class NoteView : public QListView {
+class NoteItemDelegate : public QStyledItemDelegate {
     Q_OBJECT
 
 public:
-    NoteView(QWidget* parent = 0);
-    ~NoteView();
-    
-    void mouseDoubleClickEvent(QMouseEvent* event);
+    NoteItemDelegate(QObject * parent = 0);
+//    void paint(QWidget * editor, const QModelIndex& index) const;
 
 private:
 };
 
-#endif // NOTEVIEW_H
+#endif // NOTEITEMDELEGATE_H

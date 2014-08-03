@@ -20,22 +20,14 @@
  *
  */
 
-#ifndef NOTEVIEW_H
-#define NOTEVIEW_H
+#include "noteitemdelegate.h"
 
-#include <QListView>
-#include <QMouseEvent>
-
-class NoteView : public QListView {
-    Q_OBJECT
-
-public:
-    NoteView(QWidget* parent = 0);
-    ~NoteView();
-    
-    void mouseDoubleClickEvent(QMouseEvent* event);
-
-private:
-};
-
-#endif // NOTEVIEW_H
+NoteItemDelegate::NoteItemDelegate(QObject * parent) : 
+  QStyledItemDelegate(parent) {
+  }
+  
+/*
+void NoteItemDelegate::paint(QWidget * editor, const QModelIndex& index) const {
+  QStyledItemDelegate::paint(editor, index);
+}
+*/

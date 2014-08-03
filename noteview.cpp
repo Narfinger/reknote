@@ -22,9 +22,29 @@
 
 #include "noteview.h"
 
+#include <QStandardItemModel>
+
 NoteView::NoteView(QWidget* parent): QListView(parent) {
 }
 
 NoteView::~NoteView() {
+}
+
+void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
+  QPoint p = event->pos();
+  if (indexAt(p).isValid()) {
+    QListView::mouseDoubleClickEvent(event);
+  } else {
+    QStandardItemModel* m = static_cast<QStandardItemModel*>(model());
+    if (m==nullptr) {	//no model found
+      QListView::mouseDoubleClickEvent(event);  
+      return;
+    }
+    
+    QStandardItem* t = new QStandardItem("enter text");
+    m->appendRow(t);
+    QModelIndex ni = t->index();
+    edit(ni);
+  }
 }
 
