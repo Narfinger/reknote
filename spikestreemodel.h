@@ -28,6 +28,7 @@
 #include <QStandardPaths>
 #include <QtXml/QtXml>
 
+#include "spike.h"
 
 class SpikesTreeModel : public QStandardItemModel
 {
@@ -39,9 +40,15 @@ public:
    
     void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item);
+    void appendRow(QStandardItem* i, SpikePtr p);
+    SpikePtr getPointerFromIndex(const QModelIndex& index) const;
+    
     
     Qt::ItemFlags flags(const QModelIndex &index) const;
     Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
+    
+    QList<SpikePtr> s_;
+    static const int mid;
     
 public slots:
   void load();

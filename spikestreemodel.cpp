@@ -26,6 +26,8 @@
 
 #include "spikestreemodel.h"
 
+const int SpikesTreeModel::mid = Qt::UserRole + 1;
+
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
   QStandardItem* parentItem = this->invisibleRootItem();
   /*for (int i=0; i<4; ++i) {
@@ -107,6 +109,16 @@ void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QSta
   }
 }
 
+void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
+  i->setData(s_.size(), SpikesTreeModel::mid);
+  s_.push_back(p);
+  QStandardItemModel::appendRow(i);
+}
+
+SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
+  const int r = data(index, SpikesTreeModel::mid).toInt();
+  return s_.at(r);
+}
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
   if (!index.isValid()) return 0;

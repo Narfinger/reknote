@@ -47,21 +47,12 @@ void Reknote::tmpAdd() {
     QStandardItem* t = new QStandardItem(number);
     s->appendRow(t);
   }
-  //i->m_ = s;
-  i->mm_ = s;
-  
-  sm_->appendRow(i);
+  sm_->appendRow(i, SpikePtr(s));
   tmpi++;
   
 }
 
 void Reknote::activated ( QModelIndex i ) {
-  SpikeTreeItem* sti = static_cast<SpikeTreeItem*>(sm_->itemFromIndex(i));
-  qDebug() << sti->rowCount() << sti->columnCount();
-  /*SpikePtr p = sti->m_;
-  Spike* s = p.data();
-  */
-  Spike* s = sti->mm_;
-  
-  ui.listView->setModel(s);
+  SpikePtr p = sm_->getPointerFromIndex(i);
+  ui.listView->setModel(p.data());
 }
