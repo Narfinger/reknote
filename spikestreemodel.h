@@ -41,6 +41,7 @@ public:
     void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item);
     void appendRow(QStandardItem* i, SpikePtr p);
+    void removeItemAtIndex(const QModelIndex& index);
     SpikePtr getPointerFromIndex(const QModelIndex& index) const;
     
     

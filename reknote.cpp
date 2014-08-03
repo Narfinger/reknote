@@ -19,6 +19,7 @@ Reknote::Reknote() {
   
   connect(ui.loadbutton, SIGNAL(pressed()), sm_, SLOT(load()));
   connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
+  connect(ui.deleteb, SIGNAL(pressed()), this, SLOT(tmpDelete()));
   
   tmpi = 0;
   /*  QLabel* l = new QLabel( this );
@@ -52,7 +53,14 @@ void Reknote::tmpAdd() {
   
 }
 
+void Reknote::tmpDelete() {
+  QModelIndex i = ui.treeView->selectionModel()->selectedIndexes().first();
+  sm_->removeItemAtIndex(i);
+}
+
+
 void Reknote::activated ( QModelIndex i ) {
   SpikePtr p = sm_->getPointerFromIndex(i);
   ui.listView->setModel(p.data());
+  qDebug() << sm_->rowCount();
 }

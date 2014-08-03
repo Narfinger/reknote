@@ -21,6 +21,7 @@ public:
     
 private slots:
     void tmpAdd();
+    void tmpDelete();
     
     void activated(QModelIndex i);
 };

@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>iinsert</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -98,6 +98,19 @@
       <width>256</width>
       <height>192</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deleteb">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>450</y>
+      <width>95</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>delete</string>
     </property>
    </widget>
   </widget>

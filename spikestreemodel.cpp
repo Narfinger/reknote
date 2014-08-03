@@ -115,6 +115,23 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
   QStandardItemModel::appendRow(i);
 }
 
+void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
+  QStandardItem* it = itemFromIndex(index);
+  QStandardItem* pit = it->parent();
+  if(pit==0) {
+    pit = invisibleRootItem();
+  }
+  QModelIndex p = pit->index();
+  int row = it->row();
+  removeRow(row, p);
+  
+  //delete the model but keep the size the same
+  const int pos = data(index, SpikesTreeModel::mid).toInt();
+  SpikePtr pointer = s_.at(pos);
+  pointer.clear();
+}
+
+
 SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
   const int r = data(index, SpikesTreeModel::mid).toInt();
   return s_.at(r);
