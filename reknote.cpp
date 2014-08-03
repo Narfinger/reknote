@@ -4,13 +4,12 @@
 #include "reknote.h"
 #include "spike.h"
 #include "spikestreemodel.h"
-#include "spiketreeitem.h"
 
 Reknote::Reknote() {
   ui.setupUi(this);
   
   sm_ = new SpikesTreeModel(this);
-  sm_->setItemPrototype(new SpikeTreeItem());
+  //sm_->setItemPrototype(new SpikeTreeItem());
   ui.treeView->setModel(sm_);
   ui.treeView->expandAll();
   ui.treeView->setDragDropMode(QAbstractItemView::InternalMove);
@@ -36,7 +35,7 @@ Reknote::~Reknote() {
 }
 
 void Reknote::tmpAdd() {
-  SpikeTreeItem* i = new SpikeTreeItem("tmp");
+  QStandardItem* i = new QStandardItem("tmp");
   
   //SpikePtr s( new Spike());
   
@@ -46,6 +45,7 @@ void Reknote::tmpAdd() {
     QString number = QString::number(x);
         
     QStandardItem* t = new QStandardItem(number);
+    t->setCheckable(true);
     s->appendRow(t);
   }
   sm_->appendRow(i, SpikePtr(s));
