@@ -39,7 +39,7 @@ void Reknote::tmpAdd() {
   
   //SpikePtr s( new Spike());
   
-  Spike* s = new Spike();
+  SpikePtr s(new Spike());
   int x = tmpi;
   for(; x< tmpi+5; x++) {
     QString number = QString::number(x);
@@ -48,7 +48,7 @@ void Reknote::tmpAdd() {
     t->setCheckable(true);
     s->appendRow(t);
   }
-  sm_->appendRow(i, SpikePtr(s));
+  sm_->appendRow(i, s);
   tmpi++;
   
 }
@@ -59,7 +59,7 @@ void Reknote::tmpDelete() {
 }
 
 void Reknote::activated ( QModelIndex i ) {
-  SpikePtr p = sm_->getPointerFromIndex(i);
+  const SpikePtr p = sm_->getPointerFromIndex(i);
+  p->save();
   ui.listView->setModel(p.data());
-  qDebug() << sm_->rowCount();
 }

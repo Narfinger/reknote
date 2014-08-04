@@ -23,19 +23,35 @@
 #ifndef SPIKE_H
 #define SPIKE_H
 
+#include <QDir>
 #include <QSharedPointer>
 #include <QStandardItemModel>
+#include <QString>
+#include <QUuid>
+#include <QtXml/QtXml>
 
 class Spike : public QStandardItemModel {
     Q_OBJECT
 public:
   Spike(QObject* parent = 0): QStandardItemModel(parent) {};
   Qt::ItemFlags flags(const QModelIndex &index) const;
+  
+  void save() const;
+  void load();
+  
+  void setName(const QString& name) { name_ = name; };
+  void setDir(const QString& dir);
 
 private:
+  QString name_;
+  QUuid id_;
+  QDir dir_;
+  
+  QDomElement saveElement(QDomDocument& d, const QStandardItem* it) const;
   
 };
 
+//typedef QSharedPointer<Spike> SpikePtr;
 typedef QSharedPointer<Spike> SpikePtr;
 
 #endif // SPIKE_H

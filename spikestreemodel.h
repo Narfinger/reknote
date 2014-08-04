@@ -42,7 +42,7 @@ public:
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item);
     void appendRow(QStandardItem* i, SpikePtr p);
     void removeItemAtIndex(const QModelIndex& index);
-    SpikePtr getPointerFromIndex(const QModelIndex& index) const;
+    const SpikePtr getPointerFromIndex(const QModelIndex& index) const;
     
     
     Qt::ItemFlags flags(const QModelIndex &index) const;

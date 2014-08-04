@@ -58,7 +58,6 @@ void SpikesTreeModel::load() {
   doc.setContent(&file, false, &error, &errorline, &errorcolumn);
   QDomNodeList spikelist = doc.elementsByTagName("spikes").at(0).childNodes();
   
-  qDebug() << spikelist.at(0).nodeName();
   loadXml(spikelist, invisibleRootItem());
   
   out.flush();
@@ -118,7 +117,7 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
 void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   QStandardItem* it = itemFromIndex(index);
   QStandardItem* pit = it->parent();
-  if(pit==0) {
+  if(pit==nullptr) {
     pit = invisibleRootItem();
   }
   QModelIndex p = pit->index();
@@ -127,12 +126,11 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   
   //delete the model but keep the size the same
   const int pos = data(index, SpikesTreeModel::mid).toInt();
-  SpikePtr pointer = s_.at(pos);
-  pointer.clear();
+  s_[pos].reset();
 }
 
 
-SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
+const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
   const int r = data(index, SpikesTreeModel::mid).toInt();
   return s_.at(r);
 }
