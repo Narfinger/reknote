@@ -39,7 +39,7 @@ public:
     ~SpikesTreeModel();
    
     void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
-    void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item);
+    void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const;
     void appendRow(QStandardItem* i, SpikePtr p);
     void removeItemAtIndex(const QModelIndex& index);
     const SpikePtr getPointerFromIndex(const QModelIndex& index) const;

@@ -96,7 +96,7 @@ void SpikesTreeModel::save() {
   file.close();
 }
 
-void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) {
+void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const {
   if (item->hasChildren()) {
     for(int i=0; i< item->rowCount(); ++i) {
       QStandardItem* it = item->child(i);

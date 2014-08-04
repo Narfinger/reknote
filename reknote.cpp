@@ -31,7 +31,8 @@ Reknote::Reknote() {
     */
 }
 
-Reknote::~Reknote() { 
+Reknote::~Reknote() {
+  delete sm_;
 }
 
 void Reknote::tmpAdd() {
@@ -60,6 +61,6 @@ void Reknote::tmpDelete() {
 
 void Reknote::activated ( QModelIndex i ) {
   const SpikePtr p = sm_->getPointerFromIndex(i);
-  p->save();
+  p->saveAll();
   ui.listView->setModel(p.data());
 }

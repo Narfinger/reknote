@@ -26,30 +26,30 @@
 #include "spike.h"
 
 
-Qt::ItemFlags Spike::flags ( const QModelIndex& index ) const {
+Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
   if (!index.isValid()) return 0;
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
 }
 
-void Spike::save() const {
+void Spike::save(const QModelIndex& index, const QString& filename) const {
+  QFile f(filename);
+  f.open(QIODevice::WriteOnly | QIODevice::Truncate);
+  QTextStream out(&f);
+  QDomDocument d("note");
+  d.appendChild(constructElement(d, index));
+}
+
+void Spike::saveAll() const {
   //if (!dir_.exists()) dir_.mkdir(dir_.dirName());
-  
   const QList<QStandardItem*> list = findItems("", Qt::MatchContains);
-  
   int i = 0;
-  const int length = 2; //FIXME this is obviously wrong
   for(const QStandardItem* it : list) {
-    const QString fname = QString("%1/%2-node.xml").arg(dir_.absolutePath()).arg(i, length, 'i', 0, '0');
-    QFile f(fname);
-    f.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    QTextStream out(&f);
-    QDomDocument d("note");
-    d.appendChild(saveElement(d, it));    
-    
+    const QString fname = QString("%1/%2-node.xml").arg(dir_.absolutePath()).arg(i);
+    save(it->index(), fname);
     i++;
   }
-
 }
+
 
 void Spike::load() {
 
@@ -60,13 +60,11 @@ void Spike::setDir(const QString& dir) {
   
 }
 
-
-QDomElement Spike::saveElement(QDomDocument& d, const QStandardItem* it ) const {
+const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
   QDomElement e = d.createElement("note");
-  e.setAttribute("checked", it->data(Qt::CheckStateRole).toBool());
+  e.setAttribute("checked", data(index, Qt::CheckStateRole).toBool());
  
-  QDomText text = d.createTextNode(it->data(Qt::DisplayRole).toString());
+  QDomText text = d.createTextNode(data(index, Qt::DisplayRole).toString());
   e.appendChild(text);
   return e;
 }
-
