@@ -10,15 +10,20 @@ Reknote::Reknote() {
   
   sm_ = new SpikesTreeModel(this);
   //sm_->setItemPrototype(new SpikeTreeItem());
-  ui.treeView->setModel(sm_);
-  ui.treeView->expandAll();
-  ui.treeView->setDragDropMode(QAbstractItemView::InternalMove);
-  connect(ui.pushButton, SIGNAL(pressed()), this, SLOT(tmpAdd()));
-  connect(ui.treeView, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+  ui.spikestreeview->setModel(sm_);
+  ui.spikestreeview->expandAll();
+  ui.spikestreeview->header()->hide();
+  ui.spikestreeview->setDragDropMode(QAbstractItemView::InternalMove);
+  
+  ui.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui.spikestreeview, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(spikestreeContextMenu(const QPoint&)));
+  connect(ui.actionAddSpike, SIGNAL(triggered()), this, SLOT(addSpike()));
+  connect(ui.actionDeleteSpike, SIGNAL(triggered()), this, SLOT(deleteSelectedSpike()));
+  
+  connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
   
   connect(ui.loadbutton, SIGNAL(pressed()), sm_, SLOT(load()));
   connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
-  connect(ui.deleteb, SIGNAL(pressed()), this, SLOT(tmpDelete()));
   
   tmpi = 0;
   /*  QLabel* l = new QLabel( this );
@@ -35,32 +40,39 @@ Reknote::~Reknote() {
   delete sm_;
 }
 
-void Reknote::tmpAdd() {
-  QStandardItem* i = new QStandardItem("tmp");
-  
-  //SpikePtr s( new Spike());
-  
+void Reknote::addSpike() {
+  QStandardItem* i = new QStandardItem("Edit Text");
   SpikePtr s(new Spike());
-  int x = tmpi;
-  for(; x< tmpi+5; x++) {
-    QString number = QString::number(x);
-        
-    QStandardItem* t = new QStandardItem(number);
-    t->setCheckable(true);
-    s->appendRow(t);
-  }
   sm_->appendRow(i, s);
-  tmpi++;
-  
+  ui.spikestreeview->edit(i->index());  
+  statusBar()->showMessage("Added", 1*1000);
 }
 
-void Reknote::tmpDelete() {
-  QModelIndex i = ui.treeView->selectionModel()->selectedIndexes().first();
+void Reknote::deleteSelectedSpike() {
+  const QModelIndexList li = ui.spikestreeview->selectionModel()->selectedIndexes();
+  if (li.isEmpty()) return;
+  const QModelIndex i = li.first();
+  if (!i.isValid()) return;
   sm_->removeItemAtIndex(i);
 }
 
+void Reknote::spikestreeContextMenu(const QPoint& point) const {
+  QMenu m(ui.spikestreeview);
+  m.addAction(ui.actionAddSpike);
+  m.addAction(ui.actionDeleteSpike);
+  
+  ui.actionDeleteSpike->blockSignals(true);	//we need to do something special for delete
+  QAction* a = m.exec(ui.spikestreeview->mapToGlobal(point));
+  if (a == ui.actionDeleteSpike) {
+    QModelIndex i = ui.spikestreeview->indexAt(point);
+    if (!i.isValid()) return;
+    sm_->removeItemAtIndex(i);
+  }
+  ui.actionDeleteSpike->blockSignals(false);
+}
+
+
 void Reknote::activated ( QModelIndex i ) {
   const SpikePtr p = sm_->getPointerFromIndex(i);
-  p->saveAll();
   ui.listView->setModel(p.data());
 }

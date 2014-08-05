@@ -20,10 +20,12 @@ public:
     virtual ~Reknote();
     
 private slots:
-    void tmpAdd();
-    void tmpDelete();
+  void addSpike();
+  void deleteSelectedSpike(); 
+  
+  void spikestreeContextMenu(const QPoint&) const;
     
-    void activated(QModelIndex i);
+  void activated(QModelIndex i);
 };
 
 #endif // reknote_H

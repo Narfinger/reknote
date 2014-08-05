@@ -23,6 +23,7 @@
 #include "noteview.h"
 
 #include <QStandardItemModel>
+#include <QtDebug>
 
 NoteView::NoteView(QWidget* parent): QListView(parent) {
 }
@@ -42,6 +43,7 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
     }
     
     QStandardItem* t = new QStandardItem("enter text");
+    t->setCheckable(true);
     m->appendRow(t);
     QModelIndex ni = t->index();
     edit(ni);
