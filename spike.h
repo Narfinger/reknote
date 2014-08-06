@@ -48,6 +48,7 @@ private:
   QDir dir_;
   
   const QDomElement constructElement(QDomDocument& d, const QModelIndex& index) const;
+  void insertElement(const QDomNode& n);
   
 };
 

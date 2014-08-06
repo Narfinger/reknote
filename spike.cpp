@@ -44,7 +44,21 @@ void Spike::save() const {
 }
 
 void Spike::load() {
-
+  QFile f(dir_.absolutePath() + "/spike.xml");
+  f.open(QIODevice::ReadOnly);
+  QTextStream out(&f);
+  QDomDocument d;
+  QString error;
+  int errorline;
+  int errorcolumn;
+  d.setContent(&f, false, &error, &errorline, &errorcolumn);
+  
+  const QDomNodeList notelist = d.elementsByTagName("note");
+  for(int i=0; i< notelist.size(); ++i)  {
+    const QDomNode n = notelist.at(i);
+    insertElement(n);
+  }
+  
 }
 
 void Spike::setDir(const QString& dir) {
@@ -59,4 +73,8 @@ const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& in
   QDomText text = d.createTextNode(data(index, Qt::DisplayRole).toString());
   e.appendChild(text);
   return e;
+}
+
+void Spike::insertElement ( const QDomNode& n ) {
+  //FIXME add
 }
