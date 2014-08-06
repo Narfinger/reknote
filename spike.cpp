@@ -31,25 +31,17 @@ Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
 }
 
-void Spike::save(const QModelIndex& index, const QString& filename) const {
-  QFile f(filename);
+void Spike::save() const {
+  QFile f(dir_.absolutePath() + "/spike.xml");
   f.open(QIODevice::WriteOnly | QIODevice::Truncate);
   QTextStream out(&f);
-  QDomDocument d("note");
-  d.appendChild(constructElement(d, index));
-}
-
-void Spike::saveAll() const {
-  //if (!dir_.exists()) dir_.mkdir(dir_.dirName());
-  const QList<QStandardItem*> list = findItems("", Qt::MatchContains);
-  int i = 0;
+  QDomDocument d("notes");
+    const QList<QStandardItem*> list = findItems("", Qt::MatchContains);
   for(const QStandardItem* it : list) {
-    const QString fname = QString("%1/%2-node.xml").arg(dir_.absolutePath()).arg(i);
-    save(it->index(), fname);
-    i++;
+    const QDomElement e = constructElement(d, it->index());
+    d.appendChild(e);
   }
 }
-
 
 void Spike::load() {
 

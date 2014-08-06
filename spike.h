@@ -36,8 +36,7 @@ public:
   Spike(QObject* parent = 0): QStandardItemModel(parent) {};
   Qt::ItemFlags flags(const QModelIndex &index) const;
   
-  void save(const QModelIndex& index, const QString& filename) const;
-  void saveAll() const;
+  void save() const;
   void load();
   
   void setName(const QString& name) { name_ = name; };
