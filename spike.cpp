@@ -76,5 +76,9 @@ const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& in
 }
 
 void Spike::insertElement ( const QDomNode& n ) {
-  //FIXME add
+  const QString checked = n.attributes().namedItem("checked").toAttr().value();
+  const bool bchecked = checked=="checked" ? true: false;
+  const QString text = n.firstChild().toText().nodeValue();
+  QStandardItem* i = new QStandardItem(text);
+  i->setData(bchecked, Qt::CheckStateRole);
 }
