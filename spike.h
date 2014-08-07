@@ -39,7 +39,9 @@ public:
   void save() const;
   void load();
   
-  void setName(const QString& name) { name_ = name; };
+  QString name() const { return name_; };
+  void setName(const QString& name);
+  QString dir() const { return dir_.absolutePath(); };
   void setDir(const QString& dir);
 
 private:

@@ -19,21 +19,10 @@ Reknote::Reknote() {
   connect(ui.spikestreeview, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(spikestreeContextMenu(const QPoint&)));
   connect(ui.actionAddSpike, SIGNAL(triggered()), this, SLOT(addSpike()));
   connect(ui.actionDeleteSpike, SIGNAL(triggered()), this, SLOT(deleteSelectedSpike()));
-  
-  connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
-  
   connect(ui.loadbutton, SIGNAL(pressed()), sm_, SLOT(load()));
   connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
   
-  tmpi = 0;
-  /*  QLabel* l = new QLabel( this );
-    l->setText( "Hello World!" );
-    setCentralWidget( l );
-    QAction* a = new QAction(this);
-    a->setText( "Quit" );
-    connect(a, SIGNAL(triggered()), SLOT(close()) );
-    menuBar()->addMenu( "File" )->addAction( a );
-    */
+  connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 }
 
 Reknote::~Reknote() {
@@ -44,7 +33,8 @@ void Reknote::addSpike() {
   QStandardItem* i = new QStandardItem("Edit Text");
   SpikePtr s(new Spike());
   sm_->appendRow(i, s);
-  ui.spikestreeview->edit(i->index());  
+  ui.spikestreeview->setCurrentIndex(i->index());
+  ui.spikestreeview->edit(i->index());
   statusBar()->showMessage("Added", 1*1000);
 }
 
@@ -70,7 +60,6 @@ void Reknote::spikestreeContextMenu(const QPoint& point) const {
   }
   ui.actionDeleteSpike->blockSignals(false);
 }
-
 
 void Reknote::activated ( QModelIndex i ) {
   const SpikePtr p = sm_->getPointerFromIndex(i);

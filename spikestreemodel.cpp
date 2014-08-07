@@ -26,17 +26,12 @@
 
 #include "spikestreemodel.h"
 
-const int SpikesTreeModel::mid = Qt::UserRole + 1;
+const int SpikesTreeModel::modelindexrole = Qt::UserRole + 1;
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
   QStandardItem* parentItem = this->invisibleRootItem();
-  /*for (int i=0; i<4; ++i) {
-    QStandardItem* item = new QStandardItem(QString("item %1").arg(i));
-    QStandardItem* item2 = new QStandardItem(QString("TESTitem %1").arg(i));
-    parentItem->appendRow(item);
-    parentItem->appendRow(item2);
-    parentItem = item;
-  }*/
+
+  connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
 }
 
 SpikesTreeModel::~SpikesTreeModel() {
@@ -109,7 +104,7 @@ void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QSta
 }
 
 void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
-  i->setData(s_.size(), SpikesTreeModel::mid);
+  i->setData(s_.size(), SpikesTreeModel::modelindexrole);
   s_.push_back(p);
   QStandardItemModel::appendRow(i);
 }
@@ -125,14 +120,21 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   removeRow(row, p);
   
   //delete the model but keep the size the same
-  const int pos = data(index, SpikesTreeModel::mid).toInt();
+  const int pos = data(index, SpikesTreeModel::modelindexrole).toInt();
   s_[pos].reset();
 }
 
 
 const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
-  const int r = data(index, SpikesTreeModel::mid).toInt();
+  const int r = data(index, SpikesTreeModel::modelindexrole).toInt();
   return s_.at(r);
+}
+
+void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
+  const int r = data(item->index(), SpikesTreeModel::modelindexrole).toInt();
+  const SpikePtr s = s_.at(r);
+  const QString name = data(item->index()).toString();
+  s->setName(name);
 }
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {

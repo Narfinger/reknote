@@ -50,9 +50,11 @@ public:
     Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
     
     QList<SpikePtr> s_;
-    static const int mid;
+    static const int modelindexrole;
     
 public slots:
+  void itemChangedSlot(QStandardItem* item);
+
   void load();
   void save();
 };

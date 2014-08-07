@@ -33,6 +33,9 @@ Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
 
 void Spike::save() const {
   QFile f(dir_.absolutePath() + "/spike.xml");
+  if (!QDir(dir_.absolutePath()).exists()) {
+      QDir().mkdir(dir_.absolutePath());
+  }
   f.open(QIODevice::WriteOnly | QIODevice::Truncate);
   QTextStream out(&f);
   QDomDocument d("notes");
@@ -60,6 +63,12 @@ void Spike::load() {
   }
   
 }
+
+void Spike::setName(const QString& name) {
+  name_ = name;
+  dir_ = QDir(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + "/" + name);
+}
+
 
 void Spike::setDir(const QString& dir) {
   dir_ = QString(dir) + "/" + name_;

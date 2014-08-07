@@ -13,16 +13,14 @@ Q_OBJECT
 private:
   Ui::MainWindow ui;
   SpikesTreeModel* sm_;
-  int tmpi;
 
 public:
     Reknote();
     virtual ~Reknote();
-    
+
 private slots:
   void addSpike();
   void deleteSelectedSpike(); 
-  
   void spikestreeContextMenu(const QPoint&) const;
     
   void activated(QModelIndex i);
