@@ -49,4 +49,3 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
     edit(ni);
   }
 }
-

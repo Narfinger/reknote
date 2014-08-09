@@ -23,9 +23,12 @@ Reknote::Reknote() {
   connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
   
   connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+  
+  sm_->load();
 }
 
 Reknote::~Reknote() {
+  sm_->save();
   delete sm_;
 }
 

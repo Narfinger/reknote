@@ -30,12 +30,10 @@ class NoteView : public QListView {
     Q_OBJECT
 
 public:
-    NoteView(QWidget* parent = 0);
-    ~NoteView();
+  NoteView(QWidget* parent = 0);
+  ~NoteView();
     
-    void mouseDoubleClickEvent(QMouseEvent* event);
-
-private:
+  void mouseDoubleClickEvent(QMouseEvent* event);
 };
 
 #endif // NOTEVIEW_H

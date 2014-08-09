@@ -63,9 +63,14 @@ void SpikesTreeModel::load() {
 void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
   for(int i=0; i< list.size(); ++i) {
     const QDomNode node(list.at(i));
-    QString text = node.attributes().namedItem("name").toAttr().value();
-    QStandardItem* it = new QStandardItem(text);
+    QString name = node.attributes().namedItem("name").toAttr().value();
+    QStandardItem* it = new QStandardItem(name);
     parentItem->appendRow(it);
+    SpikePtr p(new Spike());
+    p->setRelDirAndName(name);
+    
+    p->load();
+    s_.append(p);
     
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();
@@ -135,7 +140,7 @@ void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
   const int r = data(item->index(), SpikesTreeModel::modelindexrole).toInt();
   const SpikePtr s = s_.at(r);
   const QString name = data(item->index()).toString();
-  s->setName(name);
+  s->setRelDirAndName(name);
   save();
 }
 

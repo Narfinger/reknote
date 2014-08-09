@@ -25,9 +25,11 @@
 
 #include "spike.h"
 
+const int Spike::maxdirname = 10;
 
 Spike::Spike(QObject* parent) : QStandardItemModel(parent) {
   connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
+  //FIXME if new note is made and we add immediatly after a itemChanged signal is not created
 }
 
 Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
@@ -36,7 +38,6 @@ Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
 }
 
 void Spike::save() const {
-  qDebug() << "tt";
   QFile f(dir_.absolutePath() + "/spike.xml");
   if (!QDir(dir_.absolutePath()).exists()) {
       QDir().mkdir(dir_.absolutePath());
@@ -56,6 +57,7 @@ void Spike::save() const {
 
 void Spike::load() {
   QFile f(dir_.absolutePath() + "/spike.xml");
+  qDebug() << "Loaindg spike";
   f.open(QIODevice::ReadOnly);
   QTextStream out(&f);
   QDomDocument d;
@@ -69,21 +71,20 @@ void Spike::load() {
     const QDomNode n = notelist.at(i);
     insertElement(n);
   }
-  
 }
 
 void Spike::setName(const QString& name) {
   name_ = name;
-  dir_ = QDir(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + "/" + name);
 }
 
 
-void Spike::setDir(const QString& dir) {
-  dir_ = QString(dir) + "/" + name_;
-  
+void Spike::setRelativeDir(QString dir) {
+  dir.truncate(Spike::maxdirname);
+  dir_.setPath(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + "/" + dir);
 }
 
 void Spike::itemChangedSlot(QStandardItem* item) {
+  qDebug() << "saved";
   save();
 }
 
@@ -96,10 +97,11 @@ const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& in
   return e;
 }
 
-void Spike::insertElement ( const QDomNode& n ) {
+void Spike::insertElement(const QDomNode& n) {
   const QString checked = n.attributes().namedItem("checked").toAttr().value();
-  const bool bchecked = checked=="checked" ? true: false;
+  const Qt::CheckState bchecked = checked=="1" ? Qt::Checked: Qt::Unchecked;
   const QString text = n.firstChild().toText().nodeValue();
   QStandardItem* i = new QStandardItem(text);
-  i->setData(bchecked, Qt::CheckStateRole);
+  i->setCheckState(bchecked);
+  appendRow(i);
 }

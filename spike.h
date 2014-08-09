@@ -42,12 +42,15 @@ public:
   QString name() const { return name_; };
   void setName(const QString& name);
   QString dir() const { return dir_.absolutePath(); };
-  void setDir(const QString& dir);
+  void setRelativeDir(QString dir);
+  void setRelDirAndName(const QString& n) { setRelativeDir(n); setName(n); };
   
 private slots:
   void itemChangedSlot(QStandardItem* item);
 
 private:
+  static const int maxdirname;
+  
   QString name_;
   QUuid id_;
   QDir dir_;
