@@ -23,10 +23,12 @@
 #ifndef SPIKESTREEMODEL_H
 #define SPIKESTREEMODEL_H
 
-#include <QtXml/QDomNodeList>
+#include <QSet>
 #include <QStandardItemModel>
 #include <QStandardPaths>
+#include <QTimer>
 #include <QtXml/QtXml>
+#include <QtXml/QDomNodeList>
 
 #include "spike.h"
 
@@ -57,6 +59,15 @@ public slots:
 
   void load();
   void save();
+  
+private: 
+  QSet<SpikePtr> commit_;
+  QTimer committimer_;
+  bool commitourselves_ = false;
+  static const int commmitinterval;
+  
+  void setCommitTimer();
+  
 };
 
 #endif // SPIKESTREEMODEL_H

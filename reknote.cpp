@@ -36,6 +36,9 @@ void Reknote::addSpike() {
   ui.spikestreeview->setCurrentIndex(i->index());
   ui.spikestreeview->edit(i->index());
   statusBar()->showMessage("Added", 1*1000);
+  
+  ui.spikestreeview->selectionModel()->select(i->index(), QItemSelectionModel::Clear);
+  activated(i->index()); //i don't know why this is necessary
 }
 
 void Reknote::deleteSelectedSpike() {
@@ -61,7 +64,7 @@ void Reknote::spikestreeContextMenu(const QPoint& point) const {
   ui.actionDeleteSpike->blockSignals(false);
 }
 
-void Reknote::activated ( QModelIndex i ) {
+void Reknote::activated(QModelIndex i) {
   const SpikePtr p = sm_->getPointerFromIndex(i);
   ui.listView->setModel(p.data());
 }

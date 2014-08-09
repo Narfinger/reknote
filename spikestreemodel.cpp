@@ -27,6 +27,7 @@
 #include "spikestreemodel.h"
 
 const int SpikesTreeModel::modelindexrole = Qt::UserRole + 1;
+const int SpikesTreeModel::commmitinterval = 10*1000;
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
   QStandardItem* parentItem = this->invisibleRootItem();
@@ -135,10 +136,17 @@ void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
   const SpikePtr s = s_.at(r);
   const QString name = data(item->index()).toString();
   s->setName(name);
+  save();
 }
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
   if (!index.isValid()) return 0;
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
   
+}
+
+void SpikesTreeModel::setCommitTimer() {
+  committimer_.setSingleShot(true);
+  committimer_.setInterval(SpikesTreeModel::commmitinterval);
+  committimer_.start();
 }

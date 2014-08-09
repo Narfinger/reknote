@@ -33,7 +33,7 @@
 class Spike : public QStandardItemModel {
     Q_OBJECT
 public:
-  Spike(QObject* parent = 0): QStandardItemModel(parent) {};
+  Spike(QObject* parent = 0);
   Qt::ItemFlags flags(const QModelIndex &index) const;
   
   void save() const;
@@ -43,6 +43,9 @@ public:
   void setName(const QString& name);
   QString dir() const { return dir_.absolutePath(); };
   void setDir(const QString& dir);
+  
+private slots:
+  void itemChangedSlot(QStandardItem* item);
 
 private:
   QString name_;

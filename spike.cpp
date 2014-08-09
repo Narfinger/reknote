@@ -26,12 +26,17 @@
 #include "spike.h"
 
 
+Spike::Spike(QObject* parent) : QStandardItemModel(parent) {
+  connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
+}
+
 Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
   if (!index.isValid()) return 0;
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
 }
 
 void Spike::save() const {
+  qDebug() << "tt";
   QFile f(dir_.absolutePath() + "/spike.xml");
   if (!QDir(dir_.absolutePath()).exists()) {
       QDir().mkdir(dir_.absolutePath());
@@ -44,6 +49,9 @@ void Spike::save() const {
     const QDomElement e = constructElement(d, it->index());
     d.appendChild(e);
   }
+  out << d.toString();
+  out.flush();
+  f.close();
 }
 
 void Spike::load() {
@@ -73,6 +81,10 @@ void Spike::setName(const QString& name) {
 void Spike::setDir(const QString& dir) {
   dir_ = QString(dir) + "/" + name_;
   
+}
+
+void Spike::itemChangedSlot(QStandardItem* item) {
+  save();
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
