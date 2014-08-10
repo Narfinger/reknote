@@ -25,6 +25,7 @@ Reknote::Reknote() {
   connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
   
   sm_->load();
+  connect(sm_, &SpikesTreeModel::itemChanged, [=]() { this->changed(true); });
 }
 
 Reknote::~Reknote() {
@@ -42,6 +43,8 @@ void Reknote::addSpike() {
   
   ui.spikestreeview->selectionModel()->select(i->index(), QItemSelectionModel::Clear);
   activated(i->index()); //i don't know why this is necessary
+  //FIXME do we really need data here?
+  connect(s.data(), &Spike::itemChanged, [=]() { this->changed(false); });
 }
 
 void Reknote::deleteSelectedSpike() {
@@ -71,3 +74,8 @@ void Reknote::activated(QModelIndex i) {
   const SpikePtr p = sm_->getPointerFromIndex(i);
   ui.listView->setModel(p.data());
 }
+
+void Reknote::changed(bool treemodel) {
+  qDebug() << "changed";
+}
+

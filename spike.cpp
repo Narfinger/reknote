@@ -27,7 +27,7 @@
 
 const int Spike::maxdirname = 10;
 
-Spike::Spike(QObject* parent) : QStandardItemModel(parent) {
+Spike::Spike(QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
   connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
   //FIXME if new note is made and we add immediatly after a itemChanged signal is not created
 }
@@ -45,10 +45,12 @@ void Spike::save() const {
   f.open(QIODevice::WriteOnly | QIODevice::Truncate);
   QTextStream out(&f);
   QDomDocument d("notes");
-    const QList<QStandardItem*> list = findItems("", Qt::MatchContains);
+  const QList<QStandardItem*> list = findItems("", Qt::MatchContains);
+  QDomNode root = d.createElement("notes");
+  d.appendChild(root);
   for(const QStandardItem* it : list) {
     const QDomElement e = constructElement(d, it->index());
-    d.appendChild(e);
+    root.appendChild(e);
   }
   out << d.toString();
   out.flush();
@@ -65,6 +67,7 @@ void Spike::load() {
   int errorline;
   int errorcolumn;
   d.setContent(&f, false, &error, &errorline, &errorcolumn);
+  if (!error.isEmpty()) { qDebug() << "error loading file" << dir_.absolutePath(); return; }
   
   const QDomNodeList notelist = d.elementsByTagName("note");
   for(int i=0; i< notelist.size(); ++i)  {
@@ -80,7 +83,12 @@ void Spike::setName(const QString& name) {
 
 void Spike::setRelativeDir(QString dir) {
   dir.truncate(Spike::maxdirname);
-  dir_.setPath(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + "/" + dir);
+  const QString newdirname = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + "/" + dir;
+  if (dir_.isRoot())
+    dir_.setPath(newdirname); 
+  else {
+    dir_.rename(dir_.absolutePath(), newdirname);
+  }
 }
 
 void Spike::itemChangedSlot(QStandardItem* item) {

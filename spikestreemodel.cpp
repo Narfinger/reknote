@@ -71,6 +71,7 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     
     p->load();
     s_.append(p);
+    setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
     
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();

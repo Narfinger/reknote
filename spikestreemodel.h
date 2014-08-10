@@ -51,7 +51,6 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
     
-    QList<SpikePtr> s_;
     static const int modelindexrole;
     
 public slots:
@@ -61,6 +60,7 @@ public slots:
   void save();
   
 private: 
+  QList<SpikePtr> s_;
   QSet<SpikePtr> commit_;
   QTimer committimer_;
   bool commitourselves_ = false;
