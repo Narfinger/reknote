@@ -45,9 +45,7 @@ public:
     void appendRow(QStandardItem* i, SpikePtr p);
     void removeItemAtIndex(const QModelIndex& index);
     const SpikePtr getPointerFromIndex(const QModelIndex& index) const;
-    
-    
-    
+
     Qt::ItemFlags flags(const QModelIndex &index) const;
     Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
     
@@ -59,15 +57,20 @@ public slots:
   void load();
   void save();
   
+signals:
+  void commit_waiting();
+  void commit_done();
+  
+  
 private: 
   QList<SpikePtr> s_;
   QSet<SpikePtr> commit_;
+  bool committhis_ = false;
   QTimer committimer_;
-  bool commitourselves_ = false;
   static const int commmitinterval;
   
-  void setCommitTimer();
-  
+  void changed(const int index);
+  void commit();
 };
 
 #endif // SPIKESTREEMODEL_H

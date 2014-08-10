@@ -27,12 +27,16 @@
 #include "spikestreemodel.h"
 
 const int SpikesTreeModel::modelindexrole = Qt::UserRole + 1;
-const int SpikesTreeModel::commmitinterval = 10*1000;
+//const int SpikesTreeModel::commmitinterval = 10*1000;
+const int SpikesTreeModel::commmitinterval = 3*1000;
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
   QStandardItem* parentItem = this->invisibleRootItem();
-
   connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
+  
+  //setup commit times
+  committimer_.setSingleShot(true);
+  connect(&committimer_, &QTimer::timeout, this, &SpikesTreeModel::commit);
 }
 
 SpikesTreeModel::~SpikesTreeModel() {
@@ -58,6 +62,8 @@ void SpikesTreeModel::load() {
   
   out.flush();
   file.close();
+  
+  connect(this, &SpikesTreeModel::itemChanged, this, [=]() {this->changed(-1); }); //if we finished loading we can add this signal
 }
 
 void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
@@ -71,8 +77,10 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     
     p->load();
     s_.append(p);
+    const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
-    
+    connect(p.data(), &Spike::itemChanged, [=]() { this->changed(pos); });
+     
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();
       loadXml(children, it);
@@ -114,6 +122,8 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
   i->setData(s_.size(), SpikesTreeModel::modelindexrole);
   s_.push_back(p);
   QStandardItemModel::appendRow(i);
+  const int pos = s_.size() -1;
+  connect(p.data(), &Spike::itemChanged, [=]() { changed(pos); });
 }
 
 void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
@@ -151,8 +161,22 @@ Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
   
 }
 
-void SpikesTreeModel::setCommitTimer() {
-  committimer_.setSingleShot(true);
+void SpikesTreeModel::changed(const int index) {
+  emit commit_waiting();
+  if(index == -1) {
+    committhis_ = true;
+  } else {
+    const SpikePtr p = s_.at(index);
+    commit_.insert(p);
+  }
   committimer_.setInterval(SpikesTreeModel::commmitinterval);
   committimer_.start();
+}
+
+void SpikesTreeModel::commit() {
+  qDebug() << "commit" << "commit myself:" << committhis_ << "size" << commit_.size();
+  
+  committhis_ = false;
+  commit_.clear();
+  emit commit_done();
 }

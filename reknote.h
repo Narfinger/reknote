@@ -24,8 +24,6 @@ private slots:
   void spikestreeContextMenu(const QPoint&) const;
     
   void activated(QModelIndex i);
-  
-  void changed(bool treemodel);
 };
 
 #endif // reknote_H

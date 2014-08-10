@@ -36,7 +36,7 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
   if (indexAt(p).isValid()) {
     QListView::mouseDoubleClickEvent(event);
   } else {
-    QStandardItemModel* m = static_cast<QStandardItemModel*>(model());
+    QStandardItemModel* m = dynamic_cast<QStandardItemModel*>(model());
     if (m==nullptr) {	//no model found
       QListView::mouseDoubleClickEvent(event);  
       return;
