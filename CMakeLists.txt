@@ -8,7 +8,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 
+#libgit2
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+find_package(Libgit2 REQUIRED)
+include_directories(${LIBGIT2_INCLUDE_DIR})
+
 set(reknote_SRCS 
+  gitrepository.cpp
   noteitemdelegate.cpp 
   noteview.cpp 
   spike.cpp 
@@ -25,5 +31,5 @@ list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
 add_executable(reknote ${reknote_SRCS} 
 		       ${reknote_FORMS_HDRS})
-target_link_libraries(reknote ${QT_QTCORE_LIBRARY} Qt5::Widgets Qt5::Xml)
+target_link_libraries(reknote ${QT_QTCORE_LIBRARY} ${LIBGIT2_LIBRARIES} Qt5::Widgets Qt5::Xml)
 install(TARGETS reknote RUNTIME DESTINATION bin)

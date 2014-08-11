@@ -7,6 +7,7 @@
 #include "ui_reknote.h"
 
 class SpikesTreeModel;
+class GitRepository;
 
 class Reknote : public QMainWindow {
 Q_OBJECT
@@ -15,10 +16,13 @@ private:
   SpikesTreeModel* sm_;
 
 public:
-    Reknote();
-    virtual ~Reknote();
+  Reknote();
+  virtual ~Reknote();
 
-private slots:
+private:
+  QSharedPointer<GitRepository> repo_;
+    
+private slots:  
   void addSpike();
   void deleteSelectedSpike(); 
   void spikestreeContextMenu(const QPoint&) const;

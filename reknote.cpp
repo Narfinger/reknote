@@ -2,10 +2,16 @@
 #include <QListView>
 
 #include "reknote.h"
+
+#include "gitrepository.h"
 #include "spike.h"
 #include "spikestreemodel.h"
 
-Reknote::Reknote() {
+extern "C" {
+#include <git2.h>
+}
+
+Reknote::Reknote() : repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
   ui.setupUi(this);
   
   sm_ = new SpikesTreeModel(this);
@@ -27,7 +33,19 @@ Reknote::Reknote() {
   //have better ui for when commited and when saving
   connect(sm_, &SpikesTreeModel::commit_waiting, [=]() { statusBar()->showMessage("saved but not commited"); });
   connect(sm_, &SpikesTreeModel::commit_done, [=]() { statusBar()->showMessage("commited"); });
+
   
+  
+  
+  
+  
+  
+  //QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
+  QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
+  QLabel* l = new QLabel();
+  l->setPixmap(icon->pixmap(statusBar()->height()/2));
+  statusBar()->addPermanentWidget(l,1);
+  //l->setVisible(true);
   sm_->load();
 }
 
