@@ -19,9 +19,6 @@ public:
   Reknote();
   virtual ~Reknote();
 
-private:
-  QSharedPointer<GitRepository> repo_;
-    
 private slots:  
   void addSpike();
   void deleteSelectedSpike(); 

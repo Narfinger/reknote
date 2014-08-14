@@ -128,12 +128,43 @@ bool GitRepository::commitIndex(GitIndex& index) {
   return true;
 }
 
-void GitRepository::gitErrorHandling()
+GitIndex::GitIndex(QSharedPointer<GitRepository> r): repo_(r) {
+  int error = git_repository_index(&index_, repo_->repo_);
+  if (error <0) index_ = nullptr;
+}
+
+
+void GitIndex::add(const SpikePtr& s) {
+  if (index_!=nullptr) {
+    const QString dirname = s->dirName() + "/*";
+    QByteArray ba = dirname.toUtf8();
+    char* baCString = ba.data();
+    git_strarray arr = { &baCString, 1};
+    
+    int error = git_index_add_all(index_, &arr, 0,0,0);
+    if (error <0) { 
+      qDebug() << "error with adding spike";
+      gitErrorHandling();
+    }
+  } else qDebug() << "Index is null";
+}
+
+void GitIndex::add(const SpikesTreeModel& stm) {
+  if (index_!=nullptr) {
+    const QString path = "spikestree.xml";
+    const QByteArray ba = path.toUtf8();
+    const char* baCString = ba.data();
+    int error = git_index_add_bypath(index_, baCString);
+    if (error < 0) {
+     qDebug() << "error with adding tree";
+     gitErrorHandling();
+    }
+  } else qDebug() << "Index is null";
+}
+
+void gitErrorHandling()
 {
     const git_error *e = giterr_last();
     qDebug() << "Error in git (error,class,message)" << e->klass << e->message;
 }
 
-void GitIndex::addSpike (SpikePtr s) {
-
-}

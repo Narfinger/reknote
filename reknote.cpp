@@ -11,7 +11,7 @@ extern "C" {
 #include <git2.h>
 }
 
-Reknote::Reknote() : repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
+Reknote::Reknote() {
   ui.setupUi(this);
   
   sm_ = new SpikesTreeModel(this);

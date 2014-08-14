@@ -24,13 +24,15 @@
 #include <QTextStream>
 #include <qt4/QtCore/qshareddata.h>
 
+#include "gitrepository.h"
 #include "spikestreemodel.h"
 
 const int SpikesTreeModel::modelindexrole = Qt::UserRole + 1;
 //const int SpikesTreeModel::commmitinterval = 10*1000;
 const int SpikesTreeModel::commmitinterval = 3*1000;
 
-SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent) {
+SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
+  repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
   QStandardItem* parentItem = this->invisibleRootItem();
   connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
   
@@ -164,7 +166,7 @@ Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
 void SpikesTreeModel::changed(const int index) {
   emit commit_waiting();
   if(index == -1) {
-    committhis_ = true;
+    commitmodel_ = true;
   } else {
     const SpikePtr p = s_.at(index);
     commit_.insert(p);
@@ -174,9 +176,17 @@ void SpikesTreeModel::changed(const int index) {
 }
 
 void SpikesTreeModel::commit() {
-  qDebug() << "commit" << "commit myself:" << committhis_ << "size" << commit_.size();
+  qDebug() << "commit" << "commit myself:" << commitmodel_ << "size" << commit_.size();
+  GitIndex i(repo_);
+  for(const SpikePtr& s : commit_) {
+    i.add(s);
+  }
+  if (commitmodel_) {
+    i.add(*this);
+  }
+  i.commit();
   
-  committhis_ = false;
+  commitmodel_ = false;
   commit_.clear();
   emit commit_done();
 }

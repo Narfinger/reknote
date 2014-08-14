@@ -32,6 +32,8 @@
 
 #include "spike.h"
 
+class GitRepository;
+
 class SpikesTreeModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -62,10 +64,11 @@ signals:
   void commit_done();
   
   
-private: 
+private:
   QList<SpikePtr> s_;
+  QSharedPointer<GitRepository> repo_;
   QSet<SpikePtr> commit_;
-  bool committhis_ = false;
+  bool commitmodel_ = false;
   QTimer committimer_;
   static const int commmitinterval;
   

@@ -10,10 +10,11 @@ extern "C" {
 }
 
 class Spike;
+class SpikesTreeModel;
 class GitIndex;
 
 class GitRepository {
-  
+  friend class GitIndex;
 public:
   GitRepository(const QString& repo);
   ~GitRepository();
@@ -28,21 +29,23 @@ private:
   bool openRepository();
   void createRepository();
   bool commitIndex(GitIndex& index);
-  
-  void gitErrorHandling();
 };
 
 class GitIndex {
   friend class GitRepository;
-  GitIndex(QSharedPointer<GitRepository> r) : repo_(r) { /*FIXME i need the index here /*git_repository_index(&index_, repo_.data());*/ };
+public:
+  GitIndex(QSharedPointer<GitRepository> r);
   ~GitIndex() { git_index_free(index_); };
-  
-  void addSpike(QSharedPointer<Spike> s);
+  const git_index* index() const { return index_; };	//don't delete this index, it will break
+  void add(const QSharedPointer<Spike>& s);
+  void add(const SpikesTreeModel& stm);
+  void commit() { repo_->commitIndex(*this); };
   
 private:
   QSharedPointer<GitRepository> repo_;
   git_index* index_;
   
 };
+static void gitErrorHandling();
 
 #endif // GITWRAPPER_H
