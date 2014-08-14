@@ -1,5 +1,6 @@
-#include <QTreeWidgetItem>
 #include <QListView>
+#include <QMessageBox>
+#include <QTreeWidgetItem>
 
 #include "reknote.h"
 
@@ -66,12 +67,18 @@ void Reknote::addSpike() {
   activated(i->index()); //i don't know why this is necessary
 }
 
-void Reknote::deleteSelectedSpike() {
+void Reknote::deleteSelectedSpike() {  
   const QModelIndexList li = ui.spikestreeview->selectionModel()->selectedIndexes();
   if (li.isEmpty()) return;
   const QModelIndex i = li.first();
-  if (!i.isValid()) return;
-  sm_->removeItemAtIndex(i);
+  if (!i.isValid()) return;  
+  
+  //const QString question = QString("Do you want to delete Spike %1 with directory %2").arg(spike->name()).arg(spike->dir());
+  const QString question = QString("Do you?");
+  QMessageBox::StandardButton res = QMessageBox::warning(this, "Do you want to delete?", question);
+  if (false) {
+    sm_->removeItemAtIndex(i);
+  }
 }
 
 void Reknote::spikestreeContextMenu(const QPoint& point) const {

@@ -18,17 +18,17 @@ class GitRepository {
 public:
   GitRepository(const QString& repo);
   ~GitRepository();
-  
-  static QMutex gitMutex;
+  bool commitIndex(GitIndex& index);
+  void removeSpike(const QSharedPointer<Spike>& s);
 
 private:
+  static QMutex gitMutex;
   const QByteArray repodirba_;	//this needs to be kept around because otherwise the const char* will vanish
   const char* repodir_;
   git_repository* repo_ = nullptr;
   
   bool openRepository();
   void createRepository();
-  bool commitIndex(GitIndex& index);
 };
 
 class GitIndex {

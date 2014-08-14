@@ -22,7 +22,6 @@
 
 #include <QDir>
 #include <QTextStream>
-#include <qt4/QtCore/qshareddata.h>
 
 #include "gitrepository.h"
 #include "spikestreemodel.h"
@@ -136,11 +135,15 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   }
   QModelIndex p = pit->index();
   int row = it->row();
-  removeRow(row, p);
-  
-  //delete the model but keep the size the same
   const int pos = data(index, SpikesTreeModel::modelindexrole).toInt();
-  s_[pos].reset();
+  SpikePtr spike = s_[pos];
+  QDir sdir(spike->dir());
+  
+  removeRow(row, p);
+  sdir.removeRecursively();
+  repo_->removeSpike(spike);
+  //delete the model but keep the size the same
+  spike.reset();
 }
 
 
