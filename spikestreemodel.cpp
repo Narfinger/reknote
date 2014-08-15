@@ -141,9 +141,14 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   
   removeRow(row, p);
   sdir.removeRecursively();
-  repo_->removeSpike(spike);
-  //delete the model but keep the size the same
-  spike.reset();
+
+  GitIndex rindex(repo_);
+  rindex.removeSpike(spike);
+  spike.reset(); //delete the model but keep the size the same
+  save();
+  rindex.add(*this);
+  rindex.commit();
+  emit commit_done();
 }
 
 

@@ -72,11 +72,11 @@ void Reknote::deleteSelectedSpike() {
   if (li.isEmpty()) return;
   const QModelIndex i = li.first();
   if (!i.isValid()) return;  
-  
-  //const QString question = QString("Do you want to delete Spike %1 with directory %2").arg(spike->name()).arg(spike->dir());
-  const QString question = QString("Do you?");
-  QMessageBox::StandardButton res = QMessageBox::warning(this, "Do you want to delete?", question);
-  if (false) {
+  const SpikePtr spike = sm_->getPointerFromIndex(i);
+  const QString question = QString("Do you want to delete Spike \"%1\",\n with directory \"%2\"").arg(
+    spike->name()).arg(spike->dir());
+  QMessageBox::StandardButton res = QMessageBox::question(this, "Do you want to delete?", question);
+  if (res==QMessageBox::Yes) {
     sm_->removeItemAtIndex(i);
   }
 }

@@ -19,7 +19,7 @@ public:
   GitRepository(const QString& repo);
   ~GitRepository();
   bool commitIndex(GitIndex& index);
-  void removeSpike(const QSharedPointer<Spike>& s);
+  
 
 private:
   static QMutex gitMutex;
@@ -29,6 +29,7 @@ private:
   
   bool openRepository();
   void createRepository();
+  bool commitIndex(git_index* index);	//i keep this around if i need the disctinction somewhere else
 };
 
 class GitIndex {
@@ -39,13 +40,16 @@ public:
   const git_index* index() const { return index_; };	//don't delete this index, it will break
   void add(const QSharedPointer<Spike>& s);
   void add(const SpikesTreeModel& stm);
+  void removeSpike(const QSharedPointer<Spike>& s);
   void commit() { repo_->commitIndex(*this); };
-  
+
 private:
+  GitIndex() {};
   QSharedPointer<GitRepository> repo_;
   git_index* index_;
-  
 };
+
+static bool gitErrorCheck(int error);
 static void gitErrorHandling();
 
 #endif // GITWRAPPER_H

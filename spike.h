@@ -61,7 +61,6 @@ private:
   
 };
 
-//typedef QSharedPointer<Spike> SpikePtr;
 typedef QSharedPointer<Spike> SpikePtr;
 
 #endif // SPIKE_H

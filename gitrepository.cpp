@@ -27,6 +27,10 @@ GitRepository::~GitRepository() {
 }
 
 bool GitRepository::commitIndex(GitIndex& index) {
+  return commitIndex(index.index_);
+}
+
+bool GitRepository::commitIndex(git_index* index) {
   //  write git index
   git_signature *sig = NULL;
   git_oid tree_id;
@@ -34,81 +38,48 @@ bool GitRepository::commitIndex(GitIndex& index) {
   git_tree *tree = NULL;
 
   int error = git_signature_now(&sig, "AutoGit", "auto@localhost");
-  if(error < 0) {
-    gitErrorHandling();
-    return false;  
-  }
+  if (!gitErrorCheck(error)) return false;
 
   git_commit * commit = NULL; // parent
   git_oid oid_parent_commit;  // the SHA1 for last commit
 
   error = git_reference_name_to_id( &oid_parent_commit, repo_, "HEAD" );
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-  }
+  if (!gitErrorCheck(error)) return false;
 
   error = git_commit_lookup( &commit, repo_, &oid_parent_commit );
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-  }
+  if (!gitErrorCheck(error)) return false;
 
-  error = git_index_write(index.index_);
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-  }
+  error = git_index_write(index);
+  if (!gitErrorCheck(error)) return false;
 
-  error = git_index_write_tree(&tree_id, index.index_);
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-    
-  }
+  error = git_index_write_tree(&tree_id, index);
+  if (!gitErrorCheck(error)) return false;
 
   error = git_tree_lookup(&tree, repo_, &tree_id);
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-  }
+  if (!gitErrorCheck(error)) return false;
 
   const git_commit* parentarray[] = {commit};
   const QString message("Auto commit");
   QByteArray commitmessageba = message.toUtf8();
   const char *commitmessageCString = commitmessageba.data();
   error = git_commit_create(&commit_id, repo_, "HEAD", sig, sig, NULL, commitmessageCString, tree, 1, parentarray);
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-  }
+  if (!gitErrorCheck(error)) return false;
+  
   git_signature_free(sig);
   git_tree_free(tree);
   return true;
 }
 
-void GitRepository::removeSpike(const SpikePtr& s) {
-  QMutexLocker l(&gitMutex);
-  qDebug() << "implement";
-  
-}
-
 bool GitRepository::openRepository() {
   QMutexLocker l(&gitMutex);
   int error = git_repository_open(&repo_, repodir_);
-  if(error < 0) {
-    gitErrorHandling();
-    return false;
-  }
-  return true;
+  return gitErrorCheck(error);
 }
 
 void GitRepository::createRepository() {
   QMutexLocker l(&gitMutex);
   int error = git_repository_init(&repo_, repodir_, false);
-  if (error < 0) {
-    gitErrorHandling();
-  }
+  if(!gitErrorCheck(error)) return;
   
   git_signature *sig = NULL;
   git_index *index = NULL;
@@ -162,6 +133,25 @@ void GitIndex::add(const SpikesTreeModel& stm) {
      gitErrorHandling();
     }
   } else qDebug() << "Index is null";
+}
+
+void GitIndex::removeSpike(const SpikePtr& s) {
+  if (index_!=nullptr) {
+    const QString dir = s->dirName();
+    const QByteArray dirba = dir.toUtf8();
+    const char* dirCString = dirba.data();
+    int error = git_index_remove_directory(index_, dirCString, 0);
+    if (!gitErrorCheck(error)) return;
+  }
+}
+
+
+bool gitErrorCheck(int error) {
+  if(error <0) {
+    gitErrorHandling();
+    return false;
+  }
+  return true;
 }
 
 void gitErrorHandling() {
