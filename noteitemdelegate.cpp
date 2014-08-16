@@ -25,9 +25,14 @@
 NoteItemDelegate::NoteItemDelegate(QObject * parent) : 
   QStyledItemDelegate(parent) {
   }
-  
-/*
-void NoteItemDelegate::paint(QWidget * editor, const QModelIndex& index) const {
-  QStyledItemDelegate::paint(editor, index);
+
+void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const {
+  index.data(Qt::CheckStateRole);
+  if (index.data(Qt::CheckStateRole) == Qt::Checked) {
+    QStyleOptionViewItem o(option);
+    o.font.setStrikeOut(true);
+    QStyledItemDelegate::paint(painter, o, index);
+  } else
+    QStyledItemDelegate::paint(painter, option, index);
 }
-*/
+

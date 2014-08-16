@@ -7,6 +7,7 @@
 #include "gitrepository.h"
 #include "spike.h"
 #include "spikestreemodel.h"
+#include "noteitemdelegate.h"
 
 extern "C" {
 #include <git2.h>
@@ -26,8 +27,6 @@ Reknote::Reknote() {
   connect(ui.spikestreeview, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(spikestreeContextMenu(const QPoint&)));
   connect(ui.actionAddSpike, SIGNAL(triggered()), this, SLOT(addSpike()));
   connect(ui.actionDeleteSpike, SIGNAL(triggered()), this, SLOT(deleteSelectedSpike()));
-  connect(ui.loadbutton, SIGNAL(pressed()), sm_, SLOT(load()));
-  connect(ui.savebutton, SIGNAL(pressed()), sm_, SLOT(save()));
   
   connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
   
@@ -35,18 +34,15 @@ Reknote::Reknote() {
   connect(sm_, &SpikesTreeModel::commit_waiting, [=]() { statusBar()->showMessage("saved but not commited"); });
   connect(sm_, &SpikesTreeModel::commit_done, [=]() { statusBar()->showMessage("commited"); });
 
-  
-  
-  
-  
+  ui.noteView->setItemDelegate(new NoteItemDelegate(ui.noteView));
   
   
   //QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
-  QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
+  /*QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
   QLabel* l = new QLabel();
   l->setPixmap(icon->pixmap(statusBar()->height()/2));
   statusBar()->addPermanentWidget(l,1);
-  //l->setVisible(true);
+  //l->setVisible(true);*/
   sm_->load();
 }
 
@@ -98,5 +94,5 @@ void Reknote::spikestreeContextMenu(const QPoint& point) const {
 
 void Reknote::activated(QModelIndex i) {
   const SpikePtr p = sm_->getPointerFromIndex(i);
-  ui.listView->setModel(p.data());
+  ui.noteView->setModel(p.data());
 }

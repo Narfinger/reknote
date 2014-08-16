@@ -30,7 +30,7 @@ class NoteItemDelegate : public QStyledItemDelegate {
 
 public:
     NoteItemDelegate(QObject * parent = 0);
-//    void paint(QWidget * editor, const QModelIndex& index) const;
+    void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex &index) const;
 
 private:
 };
