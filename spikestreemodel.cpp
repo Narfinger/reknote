@@ -166,8 +166,9 @@ void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
 }
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
-  if (!index.isValid()) return 0;
-  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
+  if (!index.isValid()) return Qt::ItemIsDropEnabled;
+  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled 
+    | Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
   
 }
 

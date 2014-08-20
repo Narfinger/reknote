@@ -7,7 +7,6 @@
 #include "gitrepository.h"
 #include "spike.h"
 #include "spikestreemodel.h"
-#include "noteitemdelegate.h"
 
 extern "C" {
 #include <git2.h>
@@ -21,7 +20,6 @@ Reknote::Reknote() {
   ui.spikestreeview->setModel(sm_);
   ui.spikestreeview->expandAll();
   ui.spikestreeview->header()->hide();
-  ui.spikestreeview->setDragDropMode(QAbstractItemView::InternalMove);
   
   ui.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui.spikestreeview, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(spikestreeContextMenu(const QPoint&)));
@@ -34,7 +32,6 @@ Reknote::Reknote() {
   connect(sm_, &SpikesTreeModel::commit_waiting, [=]() { statusBar()->showMessage("saved but not commited"); });
   connect(sm_, &SpikesTreeModel::commit_done, [=]() { statusBar()->showMessage("commited"); });
 
-  ui.noteView->setItemDelegate(new NoteItemDelegate(ui.noteView));
   
   
   //QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));

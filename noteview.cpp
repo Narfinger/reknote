@@ -21,11 +21,14 @@
  */
 
 #include "noteview.h"
+#include "noteitemdelegate.h"
 
 #include <QStandardItemModel>
+#include <QMimeData>
 #include <QtDebug>
 
 NoteView::NoteView(QWidget* parent): QListView(parent) {
+  setItemDelegate(new NoteItemDelegate(this));
 }
 
 NoteView::~NoteView() {
@@ -48,4 +51,8 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
     QModelIndex ni = t->index();
     edit(ni);
   }
+}
+
+bool NoteView::dropMimeData(int index, const QMimeData* data, Qt::DropAction action) {
+  qDebug() << "drop";
 }

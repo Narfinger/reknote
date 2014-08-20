@@ -35,6 +35,7 @@ class Spike : public QStandardItemModel {
 public:
   Spike(QObject* parent = 0);
   Qt::ItemFlags flags(const QModelIndex &index) const;
+  Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };
   
   void save() const;
   void load();

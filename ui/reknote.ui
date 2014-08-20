@@ -40,6 +40,9 @@
          <pointsize>12</pointsize>
         </font>
        </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>
        </property>
@@ -53,8 +56,20 @@
          <pointsize>12</pointsize>
         </font>
        </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::IgnoreAction</enum>
        </property>
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>

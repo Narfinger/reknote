@@ -33,8 +33,9 @@ Spike::Spike(QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
 }
 
 Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
-  if (!index.isValid()) return 0;
-  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
+  if (!index.isValid()) return Qt::ItemIsDropEnabled;
+  return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable 
+    |Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
 void Spike::save() const {
