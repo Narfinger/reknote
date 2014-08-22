@@ -97,10 +97,18 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
   if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column ,parent);
 
   if (data->hasFormat("text/uri-list")) {
-    QString d(data->data("text/uri-list"));
-    QFile f(d);
+    const QString d(data->data("text/uri-list"));
+    const QUrl u(d);
+    QFile f(u.toLocalFile());
+    const QFileInfo fi(f);
+    const QString newfilepath = dir_.path() + "/"+ fi.fileName();
+    const QFileInfo nfi(newfilepath);
+    if (nfi.exists()) return false;
+    const bool res = f.copy(newfilepath);
+    QStandardItem* it = new QStandardItem(fi.fileName());
+    it->setCheckable(true);
+    appendRow(it);
   }
-  qDebug() << "drop the bee";
 }
 
 

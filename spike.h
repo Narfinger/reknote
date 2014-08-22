@@ -43,7 +43,7 @@ public:
   
   const QString name() const { return name_; };
   void setName(const QString& name);
-  const QString dir() const { return dir_.absolutePath(); };
+  const QString dir() const { return dir_.path(); };
   const QString dirName() const { return dir_.dirName(); };
   void setRelativeDir(QString dir);
   void setRelDirAndName(const QString& n) { setRelativeDir(n); setName(n); };
