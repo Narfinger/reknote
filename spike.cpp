@@ -28,7 +28,6 @@
 const int Spike::maxdirname = 10;
 
 Spike::Spike(QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
-  connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
   //FIXME if new note is made and we add immediatly after a itemChanged signal is not created
 }
 
@@ -39,6 +38,7 @@ Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
 }
 
 void Spike::save() const {
+  qDebug() << "saved";
   QFile f(dir_.absolutePath() + "/spike.xml");
   if (!QDir(dir_.absolutePath()).exists()) {
       QDir().mkdir(dir_.absolutePath());
@@ -56,6 +56,7 @@ void Spike::save() const {
   out << d.toString();
   out.flush();
   f.close();
+  emit saved();
 }
 
 void Spike::load() {
@@ -75,12 +76,16 @@ void Spike::load() {
     const QDomNode n = notelist.at(i);
     insertElement(n);
   }
+
+  //add signal if we finished loading
+  connect(this, &Spike::itemChanged,  this, &Spike::save);
+  connect(this, &Spike::rowsInserted, this, &Spike::save);
+  connect(this, &Spike::rowsRemoved,  this, &Spike::save);
 }
 
 void Spike::setName(const QString& name) {
   name_ = name;
 }
-
 
 void Spike::setRelativeDir(QString dir) {
   dir.truncate(Spike::maxdirname);
@@ -109,12 +114,6 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
     it->setCheckable(true);
     appendRow(it);
   }
-}
-
-
-void Spike::itemChangedSlot(QStandardItem* item) {
-  qDebug() << "saved";
-  save();
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {

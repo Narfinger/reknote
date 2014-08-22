@@ -25,6 +25,7 @@ Reknote::Reknote() {
   connect(ui.spikestreeview, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(spikestreeContextMenu(const QPoint&)));
   connect(ui.actionAddSpike, SIGNAL(triggered()), this, SLOT(addSpike()));
   connect(ui.actionDeleteSpike, SIGNAL(triggered()), this, SLOT(deleteSelectedSpike()));
+  connect(ui.actionDeleteNote, SIGNAL(triggered()), this, SLOT(deleteNote()));
   
   connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
   
@@ -71,6 +72,14 @@ void Reknote::deleteSelectedSpike() {
   QMessageBox::StandardButton res = QMessageBox::question(this, "Do you want to delete?", question);
   if (res==QMessageBox::Yes) {
     sm_->removeItemAtIndex(i);
+  }
+}
+
+void Reknote::deleteNote() {
+  const QModelIndexList li = ui.noteView->selectionModel()->selectedIndexes();
+  QAbstractItemModel* m = ui.noteView->model();
+  for(const QModelIndex& i : li) {
+    m->removeRow(i.row());
   }
 }
 

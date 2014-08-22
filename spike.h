@@ -38,7 +38,6 @@ public:
   Qt::DropActions supportedDragActions() const { return Qt::MoveAction; };
   Qt::DropActions supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; };
   
-  void save() const;
   void load();
   
   const QString name() const { return name_; };
@@ -50,8 +49,11 @@ public:
   QStringList mimeTypes() const  { return QStringList("text/plain"); };
   bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
   
-private slots:
-  void itemChangedSlot(QStandardItem* item);
+signals:
+    void saved() const;
+
+public slots:
+  void save() const;
 
 private:
   static const int maxdirname;

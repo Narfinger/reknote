@@ -28,7 +28,7 @@
 
 const int SpikesTreeModel::modelindexrole = Qt::UserRole + 1;
 //const int SpikesTreeModel::commmitinterval = 10*1000;
-const int SpikesTreeModel::commmitinterval = 3*1000;
+const int SpikesTreeModel::commmitinterval = 10*1000;
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
   repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
@@ -80,7 +80,7 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     s_.append(p);
     const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
-    connect(p.data(), &Spike::itemChanged, [=]() { this->changed(pos); });
+    connect(p.data(), &Spike::saved, [=]() { this->changed(pos); });
      
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();

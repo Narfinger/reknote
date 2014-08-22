@@ -107,6 +107,8 @@
    </attribute>
    <addaction name="actionAddSpike"/>
    <addaction name="actionDeleteSpike"/>
+   <addaction name="separator"/>
+   <addaction name="actionDeleteNote"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAddSpike">
@@ -127,6 +129,17 @@
    </property>
    <property name="text">
     <string>deleteSpike</string>
+   </property>
+  </action>
+  <action name="actionDeleteNote">
+   <property name="icon">
+    <iconset theme="edit-delete"/>
+   </property>
+   <property name="text">
+    <string>Delete Note</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

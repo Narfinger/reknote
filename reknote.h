@@ -22,6 +22,7 @@ public:
 private slots:  
   void addSpike();
   void deleteSelectedSpike(); 
+  void deleteNote();
   void spikestreeContextMenu(const QPoint&) const;
     
   void activated(QModelIndex i);
