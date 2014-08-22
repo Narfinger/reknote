@@ -23,11 +23,11 @@ Reknote::Reknote() {
   
   ui.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui.spikestreeview, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(spikestreeContextMenu(const QPoint&)));
+  connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
   connect(ui.actionAddSpike, SIGNAL(triggered()), this, SLOT(addSpike()));
   connect(ui.actionDeleteSpike, SIGNAL(triggered()), this, SLOT(deleteSelectedSpike()));
   connect(ui.actionDeleteNote, SIGNAL(triggered()), this, SLOT(deleteNote()));
-  
-  connect(ui.spikestreeview, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+
   
   //have better ui for when commited and when saving
   connect(sm_, &SpikesTreeModel::commit_waiting, [=]() { statusBar()->showMessage("saved but not commited"); });

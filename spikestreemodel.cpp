@@ -33,7 +33,7 @@ const int SpikesTreeModel::commmitinterval = 10*1000;
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
   repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
   QStandardItem* parentItem = this->invisibleRootItem();
-  connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChangedSlot(QStandardItem*)));
+  connect(this, &SpikesTreeModel::itemChanged, this, &SpikesTreeModel::itemChangedSlot);
   
   //setup commit times
   committimer_.setSingleShot(true);
