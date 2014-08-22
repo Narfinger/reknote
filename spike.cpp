@@ -92,6 +92,18 @@ void Spike::setRelativeDir(QString dir) {
   }
 }
 
+bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
+  if (action == Qt::IgnoreAction) return true;
+  if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column ,parent);
+
+  if (data->hasFormat("text/uri-list")) {
+    QString d(data->data("text/uri-list"));
+    QFile f(d);
+  }
+  qDebug() << "drop the bee";
+}
+
+
 void Spike::itemChangedSlot(QStandardItem* item) {
   qDebug() << "saved";
   save();

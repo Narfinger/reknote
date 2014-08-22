@@ -52,7 +52,3 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
     edit(ni);
   }
 }
-
-bool NoteView::dropMimeData(int index, const QMimeData* data, Qt::DropAction action) {
-  qDebug() << "drop";
-}

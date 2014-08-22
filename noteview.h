@@ -34,7 +34,6 @@ public:
   ~NoteView();
     
   void mouseDoubleClickEvent(QMouseEvent* event);
-  bool dropMimeData(int index, const QMimeData* data, Qt::DropAction action);
 };
 
 #endif // NOTEVIEW_H

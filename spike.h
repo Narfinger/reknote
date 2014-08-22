@@ -35,7 +35,8 @@ class Spike : public QStandardItemModel {
 public:
   Spike(QObject* parent = 0);
   Qt::ItemFlags flags(const QModelIndex &index) const;
-  Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };
+  Qt::DropActions supportedDragActions() const { return Qt::MoveAction; };
+  Qt::DropActions supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; };
   
   void save() const;
   void load();
@@ -46,6 +47,8 @@ public:
   const QString dirName() const { return dir_.dirName(); };
   void setRelativeDir(QString dir);
   void setRelDirAndName(const QString& n) { setRelativeDir(n); setName(n); };
+  QStringList mimeTypes() const  { return QStringList("text/plain"); };
+  bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
   
 private slots:
   void itemChangedSlot(QStandardItem* item);
