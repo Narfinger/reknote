@@ -1,8 +1,8 @@
 project(reknote)
 cmake_minimum_required(VERSION 2.8.12)
-find_package(Qt5Core)
-find_package(Qt5Widgets)
-find_package(Qt5Xml)
+find_package(Qt5Core 5.2.1)
+find_package(Qt5Widgets 5.2.1)
+find_package(Qt5Xml 5.2.1)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
