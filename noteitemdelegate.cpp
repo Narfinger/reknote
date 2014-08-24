@@ -20,6 +20,13 @@
  *
  */
 
+#include <QAbstractTextDocumentLayout>
+#include <QApplication>
+#include <QDebug>
+#include <QPainter>
+#include <QStyleOptionViewItem>
+#include <QTextDocument>
+
 #include "noteitemdelegate.h"
 
 NoteItemDelegate::NoteItemDelegate(QObject * parent) : 
@@ -27,12 +34,32 @@ NoteItemDelegate::NoteItemDelegate(QObject * parent) :
   }
 
 void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const {
-  index.data(Qt::CheckStateRole);
-  if (index.data(Qt::CheckStateRole) == Qt::Checked) {
-    QStyleOptionViewItem o(option);
-    o.font.setStrikeOut(true);
-    QStyledItemDelegate::paint(painter, o, index);
-  } else
-    QStyledItemDelegate::paint(painter, option, index);
+  QStyleOptionViewItem o = option;
+  initStyleOption(&o, index);
+  QStyle *style = o.widget->style(); //do we need this?
+  QTextDocument d;
+  d.setDefaultFont(o.font);
+  QString text = o.text;
+  if (o.checkState == Qt::Checked) {
+    text = text.prepend("<s>").append("</s>");
+  }
+  d.setHtml(text);
+  o.text = QString();
+  style->drawControl(QStyle::CE_ItemViewItem, &o, painter);
+  QAbstractTextDocumentLayout::PaintContext ctx;
+  
+  QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &o);
+  painter->save();
+  painter->translate(textRect.topLeft());
+  d.documentLayout()->draw(painter, ctx);
+  painter->restore();
 }
 
+QSize NoteItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const {
+  QStyleOptionViewItem o = option;
+  initStyleOption(&o, index);
+  QTextDocument d;
+  d.setDefaultFont(o.font);
+  d.setHtml(o.text);
+  return QSize(o.widget->size().width(), d.size().height());
+}
