@@ -110,10 +110,15 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
     const QFileInfo nfi(newfilepath);
     if (nfi.exists()) return false;
     const bool res = f.copy(newfilepath);
-    QStandardItem* it = new QStandardItem(fi.fileName());
+    if (!res) return false;
+
+    const QString itemstring = QString("<a href='file://%1'>%2</a>").arg(newfilepath).arg(fi.fileName());
+    QStandardItem* it = new QStandardItem(itemstring);
     it->setCheckable(true);
     appendRow(it);
+    return true;
   }
+  return false;
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
