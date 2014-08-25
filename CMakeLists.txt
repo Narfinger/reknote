@@ -27,7 +27,7 @@ SET(reknote_FORMS
 )
 QT5_WRAP_UI(reknote_FORMS_HDRS ${reknote_FORMS})
 
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+list(APPEND CMAKE_CXX_FLAGS " -std=c++11 -march=native -Wall -pedantic -Wextra -Wundef -Wshadow -Wcast-align -Wwrite-strings -Wunreachable-code -Winit-self ")
 
 add_executable(reknote ${reknote_SRCS} 
 		       ${reknote_FORMS_HDRS})
