@@ -146,7 +146,7 @@ void GitIndex::removeSpike(const SpikePtr& s) {
 }
 
 
-bool gitErrorCheck(int error) {
+static bool gitErrorCheck(int error) {
   if(error <0) {
     gitErrorHandling();
     return false;
@@ -154,7 +154,7 @@ bool gitErrorCheck(int error) {
   return true;
 }
 
-void gitErrorHandling() {
+static void gitErrorHandling() {
     const git_error *e = giterr_last();
     qDebug() << "Error in git (error,class,message)" << e->klass << e->message;
 }
