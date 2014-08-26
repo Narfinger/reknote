@@ -1,6 +1,7 @@
 #ifndef GITWRAPPER_H
 #define GITWRAPPER_H
 
+#include <QDebug>
 #include <QtCore/QMutex>
 #include <QSharedPointer>
 #include <QString>
@@ -49,7 +50,17 @@ private:
   git_index* index_;
 };
 
-static bool gitErrorCheck(int error);
-static void gitErrorHandling();
+static void gitErrorHandling() {
+    const git_error *e = giterr_last();
+    qDebug() << "Error in git (error,class,message)" << e->klass << e->message;
+}
+
+static bool gitErrorCheck(int error) {
+  if(error <0) {
+    gitErrorHandling();
+    return false;
+  }
+  return true;
+}
 
 #endif // GITWRAPPER_H

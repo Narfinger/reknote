@@ -32,7 +32,7 @@ const int SpikesTreeModel::commmitinterval = 10*1000;
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
   repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
-  QStandardItem* parentItem = this->invisibleRootItem();
+  //QStandardItem* parentItem = this->invisibleRootItem();
   connect(this, &SpikesTreeModel::itemChanged, this, &SpikesTreeModel::itemChangedSlot);
   
   //setup commit times
@@ -73,10 +73,8 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     QString name = node.attributes().namedItem("name").toAttr().value();
     QStandardItem* it = new QStandardItem(name);
     parentItem->appendRow(it);
-    SpikePtr p(new Spike());
-    p->setRelDirAndName(name);
-    
-    p->load();
+    SpikePtr p(new Spike(name));
+
     s_.append(p);
     const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);

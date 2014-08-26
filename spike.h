@@ -34,6 +34,7 @@ class Spike : public QStandardItemModel {
     Q_OBJECT
 public:
   Spike(QObject* parent = 0);
+  Spike(const QString& reldirandname, QObject* parent = 0);	//loads the spike with reldirandname set
   Qt::ItemFlags flags(const QModelIndex &index) const;
   Qt::DropActions supportedDragActions() const { return Qt::MoveAction; };
   Qt::DropActions supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; };
@@ -62,6 +63,7 @@ private:
   QUuid id_;
   QDir dir_;
   
+  void setupSignals();
   const QDomElement constructElement(QDomDocument& d, const QModelIndex& index) const;
   void insertElement(const QDomNode& n);
   

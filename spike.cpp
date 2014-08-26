@@ -28,7 +28,18 @@
 const int Spike::maxdirname = 10;
 
 Spike::Spike(QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
-  //FIXME if new note is made and we add immediatly after a itemChanged signal is not created
+  setupSignals();
+}
+
+
+Spike::Spike(const QString& reldirandname, QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
+  if (reldirandname.isEmpty()) {
+    qDebug() << "Warning, empty reldirandname, aborting everything";
+    return;
+  }
+  setRelDirAndName(reldirandname);
+  load();
+  setupSignals(); //add signal if we finished loading or are not loading anything
 }
 
 Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
@@ -76,11 +87,6 @@ void Spike::load() {
     const QDomNode n = notelist.at(i);
     insertElement(n);
   }
-
-  //add signal if we finished loading
-  connect(this, &Spike::itemChanged,  this, &Spike::save);
-  connect(this, &Spike::rowsInserted, this, &Spike::save);
-  connect(this, &Spike::rowsRemoved,  this, &Spike::save);
 }
 
 void Spike::setName(const QString& name) {
@@ -119,6 +125,12 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
     return true;
   }
   return false;
+}
+
+void Spike::setupSignals() {
+  connect(this, &Spike::itemChanged,  this, &Spike::save);
+  connect(this, &Spike::rowsInserted, this, &Spike::save);
+  connect(this, &Spike::rowsRemoved,  this, &Spike::save);
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
