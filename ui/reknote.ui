@@ -128,12 +128,14 @@
     </iconset>
    </property>
    <property name="text">
-    <string>deleteSpike</string>
+    <string>Delete Spike</string>
    </property>
   </action>
   <action name="actionDeleteNote">
    <property name="icon">
-    <iconset theme="edit-delete"/>
+    <iconset theme="edit-delete">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Delete Note</string>
