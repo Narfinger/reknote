@@ -6,6 +6,7 @@
 
 #include "ui_reknote.h"
 
+class QLabel;
 class SpikesTreeModel;
 class GitRepository;
 
@@ -19,13 +20,18 @@ public:
   Reknote();
   virtual ~Reknote();
 
-private slots:  
+private:
+  QLabel* sbarText;
+  QLabel* sbarIcon;
+  
+private slots:    
   void addSpike();
   void deleteSelectedSpike(); 
   void deleteNote();
   void spikestreeContextMenu(const QPoint&) const;
-    
   void activated(QModelIndex i);
+  void commitWaiting();
+  void commitFinished();
 };
 
 #endif // reknote_H

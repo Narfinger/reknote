@@ -1,3 +1,4 @@
+#include <QLabel>
 #include <QListView>
 #include <QMessageBox>
 #include <QTreeWidgetItem>
@@ -21,6 +22,13 @@ Reknote::Reknote() {
   ui.spikestreeview->expandAll();
   ui.spikestreeview->header()->hide();
   
+  QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
+  sbarIcon = new QLabel();
+  sbarIcon->setPixmap(icon->pixmap(statusBar()->height()/2));
+  statusBar()->addPermanentWidget(sbarIcon);
+  sbarText = new QLabel("");
+  statusBar()->addPermanentWidget(sbarText);
+  
   ui.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui.spikestreeview, &QAbstractItemView::customContextMenuRequested, this, &Reknote::spikestreeContextMenu);
   connect(ui.spikestreeview, &QAbstractItemView::activated, this, &Reknote::activated);
@@ -31,17 +39,10 @@ Reknote::Reknote() {
 
   
   //have better ui for when commited and when saving
-  connect(sm_, &SpikesTreeModel::commit_waiting, [=]() { statusBar()->showMessage("saved but not commited"); });
-  connect(sm_, &SpikesTreeModel::commit_done, [=]() { statusBar()->showMessage("commited"); });
-
+  connect(sm_, &SpikesTreeModel::commit_waiting, this, &Reknote::commitWaiting);
+  connect(sm_, &SpikesTreeModel::commit_done, this, &Reknote::commitFinished);
+  sbarIcon->setVisible(false);
   
-  
-  //QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
-  /*QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
-  QLabel* l = new QLabel();
-  l->setPixmap(icon->pixmap(statusBar()->height()/2));
-  statusBar()->addPermanentWidget(l,1);
-  //l->setVisible(true);*/
   sm_->load();
 }
 
@@ -103,3 +104,14 @@ void Reknote::activated(QModelIndex i) {
   const SpikePtr p = sm_->getPointerFromIndex(i);
   ui.noteView->setModel(p.data());
 }
+
+void Reknote::commitWaiting() {
+  sbarIcon->setVisible(false);
+  sbarText->setText("saved");
+}
+
+void Reknote::commitFinished() {
+  sbarIcon->setVisible(true);
+  sbarText->setText("");
+}
+
