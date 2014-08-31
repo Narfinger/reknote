@@ -42,6 +42,7 @@ public:
   void add(const QSharedPointer<Spike>& s);
   void add(const SpikesTreeModel& stm);
   void removeSpike(const QSharedPointer<Spike>& s);
+  void removeFiles(const QStringList& l);
   void commit() { repo_->commitIndex(*this); };
 
 private:

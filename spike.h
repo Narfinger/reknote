@@ -27,31 +27,39 @@
 #include <QSharedPointer>
 #include <QStandardItemModel>
 #include <QString>
+#include <QStringList>
 #include <QUuid>
 #include <QtXml/QtXml>
 
 class Spike : public QStandardItemModel {
     Q_OBJECT
 public:
+  static const int filepathrole;
+
   Spike(QObject* parent = 0);
   Spike(const QString& reldirandname, QObject* parent = 0);	//loads the spike with reldirandname set
   Qt::ItemFlags flags(const QModelIndex &index) const;
   Qt::DropActions supportedDragActions() const { return Qt::MoveAction; };
   Qt::DropActions supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; };
-  
+
   void load();
-  
+
   const QString name() const { return name_; };
   void setName(const QString& name);
   const QString dir() const { return dir_.path(); };
   const QString dirName() const { return dir_.dirName(); };
   void setRelativeDir(QString dir);
   void setRelDirAndName(const QString& n) { setRelativeDir(n); setName(n); };
+  QStringList deletedFiles() const { return deletedfiles_; };
+  void clearDeletedFiles() { deletedfiles_.clear(); };
+
+  bool removeRows(int position, int rows, const QModelIndex& parent);
   QStringList mimeTypes() const  { return QStringList("text/plain"); };
   bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
-  
+
 signals:
-    void saved() const;
+  void saved() const;
+  void deletedFile(QString) const;
 
 public slots:
   void save() const;
@@ -62,11 +70,12 @@ private:
   QString name_;
   QUuid id_;
   QDir dir_;
+  QStringList deletedfiles_;
   
   void setupSignals();
   const QDomElement constructElement(QDomDocument& d, const QModelIndex& index) const;
   void insertElement(const QDomNode& n);
-  
+  QIcon iconFromFilepath(const QString& fp) const;
 };
 
 typedef QSharedPointer<Spike> SpikePtr;

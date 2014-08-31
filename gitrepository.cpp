@@ -144,3 +144,7 @@ void GitIndex::removeSpike(const SpikePtr& s) {
     if (!gitErrorCheck(error)) return;
   }
 }
+
+void GitIndex::removeFiles(const QStringList& l) {
+  qDebug() << "IMPLEMENT";
+}

@@ -27,12 +27,10 @@
 #include "spikestreemodel.h"
 
 const int SpikesTreeModel::modelindexrole = Qt::UserRole + 1;
-//const int SpikesTreeModel::commmitinterval = 10*1000;
 const int SpikesTreeModel::commmitinterval = 10*1000;
 
 SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
   repo_(new GitRepository(QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0))) {
-  //QStandardItem* parentItem = this->invisibleRootItem();
   connect(this, &SpikesTreeModel::itemChanged, this, &SpikesTreeModel::itemChangedSlot);
   
   //setup commit times
@@ -187,6 +185,8 @@ void SpikesTreeModel::commit() {
   GitIndex i(repo_);
   for(const SpikePtr& s : commit_) {
     i.add(s);
+    i.removeFiles(s->deletedFiles());
+    s->clearDeletedFiles();
   }
   if (commitmodel_) {
     i.add(*this);

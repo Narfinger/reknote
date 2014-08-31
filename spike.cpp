@@ -21,11 +21,15 @@
  */
 
 #include <QDir>
+#include <QFileIconProvider>
+#include <QMimeData>
+#include <QMimeDatabase>
 #include <QTextStream>
 
 #include "spike.h"
 
 const int Spike::maxdirname = 10;
+const int Spike::filepathrole = Qt::UserRole + 1;
 
 Spike::Spike(QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
   setupSignals();
@@ -103,6 +107,22 @@ void Spike::setRelativeDir(QString dir) {
   }
 }
 
+bool Spike::removeRows(int position, int rows, const QModelIndex& parent) {
+  QStandardItem* it = itemFromIndex(parent);
+  for (int i = position + rows - 1; i >= position; i--) {
+    QModelIndex child = index(i, 0, parent);
+    const QString filepath = child.data(filepathrole).toString();
+    if (!filepath.isEmpty()) {
+      QFile f(filepath);
+      f.remove();
+      deletedfiles_.append(filepath);
+    }
+  }
+  bool s = QStandardItemModel::removeRows(position, rows, parent);
+  save();
+  return s;
+}
+
 bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
   if (action == Qt::IgnoreAction) return true;
   if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column ,parent);
@@ -118,8 +138,10 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
     const bool res = f.copy(newfilepath);
     if (!res) return false;
 
-    const QString itemstring = QString("<a href='file://%1'>%2</a>").arg(newfilepath).arg(fi.fileName());
-    QStandardItem* it = new QStandardItem(itemstring);
+    //const QString itemstring = QString("<a href='file://%1'>%2</a>").arg(newfilepath).arg(fi.fileName());
+    QStandardItem* it = new QStandardItem("Edit Text");
+    it->setData(newfilepath, filepathrole);
+    it->setIcon(iconFromFilepath(newfilepath));
     it->setCheckable(true);
     appendRow(it);
     return true;
@@ -130,13 +152,15 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
 void Spike::setupSignals() {
   connect(this, &Spike::itemChanged,  this, &Spike::save);
   connect(this, &Spike::rowsInserted, this, &Spike::save);
-  connect(this, &Spike::rowsRemoved,  this, &Spike::save);
+  //connect(this, &Spike::rowsRemoved,  this, &Spike::save);
+  //connect(this, &Spike::rowsAboutToBeRemoved, this, &Spike::removed);
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
   QDomElement e = d.createElement("note");
   e.setAttribute("checked", data(index, Qt::CheckStateRole).toBool());
- 
+  e.setAttribute("file", data(index, filepathrole).toString());
+
   QDomText text = d.createTextNode(data(index, Qt::DisplayRole).toString());
   e.appendChild(text);
   return e;
@@ -145,8 +169,24 @@ const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& in
 void Spike::insertElement(const QDomNode& n) {
   const QString checked = n.attributes().namedItem("checked").toAttr().value();
   const Qt::CheckState bchecked = checked=="1" ? Qt::Checked: Qt::Unchecked;
+
+  const QString filepath = n.attributes().namedItem("file").toAttr().value();
+
   const QString text = n.firstChild().toText().nodeValue();
   QStandardItem* i = new QStandardItem(text);
   i->setCheckState(bchecked);
+  i->setData(filepath, filepathrole);
+  if(!filepath.isEmpty()) {
+    i->setIcon(iconFromFilepath(filepath));
+  }
+
   appendRow(i);
+}
+
+QIcon Spike::iconFromFilepath(const QString& fp) const {
+  const QMimeDatabase db;
+  const QMimeType mt = db.mimeTypeForFile(fp);
+  qDebug() << "called for" << fp << db.mimeTypeForFile(fp).iconName() << mt.genericIconName();
+  return QIcon::fromTheme(mt.genericIconName());
+  //return QIcon::fromTheme(db.mimeTypeForFile(fp).iconName());
 }

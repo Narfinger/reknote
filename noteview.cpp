@@ -22,13 +22,18 @@
 
 #include "noteview.h"
 #include "noteitemdelegate.h"
+#include "spike.h"
 
 #include <QStandardItemModel>
+#include <QDesktopServices>
 #include <QMimeData>
 #include <QtDebug>
+#include <QUrl>
 
 NoteView::NoteView(QWidget* parent): QListView(parent) {
   setItemDelegate(new NoteItemDelegate(this));
+  setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this, &QAbstractItemView::customContextMenuRequested, this, &NoteView::noteContextMenu);
 }
 
 NoteView::~NoteView() {
@@ -50,5 +55,16 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
     m->appendRow(t);
     QModelIndex ni = t->index();
     edit(ni);
+  }
+}
+
+void NoteView::noteContextMenu(const QPoint& p) {
+  const QModelIndex i = indexAt(p);
+  const QStandardItem* it = dynamic_cast<QStandardItemModel*>(model())->itemFromIndex(i);
+  if (i.isValid()) {
+    const QString filepath = i.data(Spike::filepathrole).toString();
+    if (!filepath.isEmpty()) {
+      QDesktopServices::openUrl(QUrl::fromLocalFile(filepath));
+    }
   }
 }

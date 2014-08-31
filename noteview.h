@@ -34,6 +34,7 @@ public:
   ~NoteView();
     
   void mouseDoubleClickEvent(QMouseEvent* event);
+  void noteContextMenu(const QPoint&);
 };
 
 #endif // NOTEVIEW_H
