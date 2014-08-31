@@ -146,5 +146,16 @@ void GitIndex::removeSpike(const SpikePtr& s) {
 }
 
 void GitIndex::removeFiles(const QStringList& l) {
-  qDebug() << "IMPLEMENT";
+  for(const QString& f: l)
+    removeFile(f);
+}
+
+void GitIndex::removeFile(const QString& f) {
+  qDebug() << "remove" << f;
+  if (index_!=nullptr) {
+    const QByteArray ba = f.toUtf8();
+    const char* baCString = ba.data();
+    int error = git_index_remove_bypath(index_, baCString);
+    if (!gitErrorCheck(error)) return;
+  }
 }

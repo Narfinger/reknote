@@ -115,7 +115,7 @@ bool Spike::removeRows(int position, int rows, const QModelIndex& parent) {
     if (!filepath.isEmpty()) {
       QFile f(filepath);
       f.remove();
-      deletedfiles_.append(filepath);
+      deletedfiles_.append(dirName() + "/" + dir_.relativeFilePath(filepath));
     }
   }
   bool s = QStandardItemModel::removeRows(position, rows, parent);
