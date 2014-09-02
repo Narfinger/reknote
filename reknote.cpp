@@ -31,7 +31,8 @@ Reknote::Reknote() {
   
   ui.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui.spikestreeview, &QAbstractItemView::customContextMenuRequested, this, &Reknote::spikestreeContextMenu);
-  connect(ui.spikestreeview, &QAbstractItemView::activated, this, &Reknote::activated);
+// connect(ui.spikestreeview, &QAbstractItemView::activated, this, &Reknote::activated); //this doesnt work on my ubuntu machien
+  connect(ui.spikestreeview, &QAbstractItemView::clicked, this, &Reknote::activated);
   
   connect(ui.actionAddSpike, &QAction::triggered, this, &Reknote::addSpike);
   connect(ui.actionDeleteSpike, &QAction::triggered, this, &Reknote::deleteSelectedSpike);
@@ -42,8 +43,13 @@ Reknote::Reknote() {
   connect(sm_, &SpikesTreeModel::commit_waiting, this, &Reknote::commitWaiting);
   connect(sm_, &SpikesTreeModel::commit_done, this, &Reknote::commitFinished);
   sbarIcon->setVisible(false);
-  
+
   sm_->load();
+
+  //temporary load the first item
+  const QModelIndex i = sm_->invisibleRootItem()->child(0)->index();
+  ui.spikestreeview->setCurrentIndex(i);
+  activated(i);
 }
 
 Reknote::~Reknote() {
@@ -60,7 +66,7 @@ void Reknote::addSpike() {
   statusBar()->showMessage("Added", 1*1000);
   
   ui.spikestreeview->selectionModel()->select(i->index(), QItemSelectionModel::Clear);
-  activated(i->index()); //i don't know why this is necessary
+  ui.spikestreeview->setCurrentIndex(i->index());
 }
 
 void Reknote::deleteSelectedSpike() {  
