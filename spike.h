@@ -50,7 +50,7 @@ public:
   const QString dirName() const { return dir_.dirName(); };
   void setRelativeDir(QString dir);
   void setRelDirAndName(const QString& n) { setRelativeDir(n); setName(n); };
-  QStringList deletedFiles() const { return deletedfiles_; };
+  const QStringList& deletedFiles() const { return deletedfiles_; };
   void clearDeletedFiles() { deletedfiles_.clear(); };
 
   bool removeRows(int position, int rows, const QModelIndex& parent);
