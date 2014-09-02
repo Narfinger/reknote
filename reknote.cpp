@@ -1,6 +1,7 @@
 #include <QLabel>
 #include <QListView>
 #include <QMessageBox>
+#include <QSettings>
 #include <QTreeWidgetItem>
 
 #include "reknote.h"
@@ -46,14 +47,23 @@ Reknote::Reknote() {
 
   sm_->load();
 
-  //temporary load the first item
-  const QModelIndex i = sm_->invisibleRootItem()->child(0)->index();
+  //restore index
+  QSettings s("Foo", "reknote");
+  const int row = s.value("selected-spike-row").toInt();
+  const int column = s.value("selected-spike-column").toInt();
+  const QModelIndex i = sm_->index(row, column);
   ui.spikestreeview->setCurrentIndex(i);
   activated(i);
 }
 
 Reknote::~Reknote() {
   sm_->save();
+
+  const QModelIndex i = ui.spikestreeview->selectionModel()->currentIndex();
+  QSettings s("Foo", "reknote");
+  s.setValue("selected-spike-row", i.row());
+  s.setValue("selected-spike-column", i.column());
+
   delete sm_;
 }
 
