@@ -16,7 +16,11 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Reknote</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images/res.qrc">
+    <normaloff>:/icons/knotes_48.png</normaloff>:/icons/knotes_48.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -152,6 +156,8 @@
    <header>noteview.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../images/res.qrc"/>
+ </resources>
  <connections/>
 </ui>

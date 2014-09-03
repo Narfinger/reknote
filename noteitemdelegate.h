@@ -23,7 +23,9 @@
 #ifndef NOTEITEMDELEGATE_H
 #define NOTEITEMDELEGATE_H
 
+#include <memory>
 #include <QStyledItemDelegate>
+class QTextDocument;
 
 class NoteItemDelegate : public QStyledItemDelegate {
     Q_OBJECT
@@ -34,6 +36,7 @@ public:
   QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
+  std::unique_ptr<QTextDocument> html(const QStyleOptionViewItem& option, const QModelIndex &index) const;
 };
 
 #endif // NOTEITEMDELEGATE_H

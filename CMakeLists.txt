@@ -26,10 +26,12 @@ SET(reknote_FORMS
   ui/reknote.ui
 )
 QT5_WRAP_UI(reknote_FORMS_HDRS ${reknote_FORMS})
+qt5_add_resources(reknote_RES "images/res.qrc")
 
 list(APPEND CMAKE_CXX_FLAGS " -std=c++11 -march=native -Wall -pedantic -Wextra -Wundef -Wcast-align -Wwrite-strings -Wunreachable-code -Winit-self ")
 
 add_executable(reknote ${reknote_SRCS} 
-		       ${reknote_FORMS_HDRS})
+		       ${reknote_FORMS_HDRS}
+		       ${reknote_RES})
 target_link_libraries(reknote ${QT_QTCORE_LIBRARY} ${LIBGIT2_LIBRARIES} Qt5::Widgets Qt5::Xml)
 install(TARGETS reknote RUNTIME DESTINATION bin)

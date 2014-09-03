@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QTextDocument>
+#include <QTextOption>
 
 #include "noteitemdelegate.h"
 
@@ -36,30 +37,38 @@ NoteItemDelegate::NoteItemDelegate(QObject * parent) :
 void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const {
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
-  QStyle *style = o.widget->style(); //do we need this?
-  QTextDocument d;
-  d.setDefaultFont(o.font);
-  QString text = o.text;
   if (o.checkState == Qt::Checked) {
-    text = text.prepend("<s>").append("</s>");
+    o.text = o.text.prepend("<s>").append("</s>");
   }
-  d.setHtml(text);
+  std::unique_ptr<QTextDocument> d = html(o, index);
+  
+  //render
   o.text = QString();
+  QStyle *style = o.widget->style(); //do we need this?
   style->drawControl(QStyle::CE_ItemViewItem, &o, painter);
   QAbstractTextDocumentLayout::PaintContext ctx;
-  
   QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &o);
   painter->save();
   painter->translate(textRect.topLeft());
-  d.documentLayout()->draw(painter, ctx);
+  d->documentLayout()->draw(painter, ctx);
   painter->restore();
 }
 
 QSize NoteItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const {
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
-  QTextDocument d;
-  d.setDefaultFont(o.font);
-  d.setHtml(o.text);
-  return QSize(o.widget->size().width(), d.size().height());
+  std::unique_ptr<QTextDocument> d = html(o, index);
+  return QSize(o.widget->size().width()+20, d->size().height());
+}
+
+std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem& option, const QModelIndex& index ) const {
+  Q_UNUSED(index);
+  std::unique_ptr<QTextDocument> d(new QTextDocument());
+  QTextOption op(d->defaultTextOption());
+  op.setWrapMode(QTextOption::WordWrap);
+  d->setDefaultTextOption(op);
+  d->setTextWidth(option.rect.width()-25);
+  d->setDefaultFont(option.font);
+  d->setHtml(option.text);
+  return d;
 }
