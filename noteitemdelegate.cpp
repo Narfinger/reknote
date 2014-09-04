@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QTextDocument>
+#include <QTextEdit>
 #include <QTextOption>
 
 #include "noteitemdelegate.h"
@@ -34,9 +35,24 @@ NoteItemDelegate::NoteItemDelegate(QObject * parent) :
   QStyledItemDelegate(parent) {
   }
 
-void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const {
+  
+QWidget* NoteItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+  QTextEdit* e = new QTextEdit(parent);
+  
+  
+  QWidget* tmp = QStyledItemDelegate::createEditor(parent, option,index);
+  qDebug() << tmp->metaObject()->className();
+
+  qDebug() << "yeah";
+  return e;
+}
+
+void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const { 
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
+  
+    qDebug() << o.text;
+  
   if (o.checkState == Qt::Checked) {
     o.text = o.text.prepend("<s>").append("</s>");
   }
@@ -58,7 +74,7 @@ QSize NoteItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
   std::unique_ptr<QTextDocument> d = html(o, index);
-  return QSize(o.widget->size().width()+20, d->size().height());
+  return QSize(o.widget->size().width(), d->size().height());
 }
 
 std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem& option, const QModelIndex& index ) const {
