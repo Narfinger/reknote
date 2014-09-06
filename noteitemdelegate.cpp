@@ -26,7 +26,7 @@
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QTextDocument>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QTextOption>
 
 #include "noteitemdelegate.h"
@@ -37,21 +37,14 @@ NoteItemDelegate::NoteItemDelegate(QObject * parent) :
 
   
 QWidget* NoteItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-  QTextEdit* e = new QTextEdit(parent);
-  
-  
-  QWidget* tmp = QStyledItemDelegate::createEditor(parent, option,index);
-  qDebug() << tmp->metaObject()->className();
-
-  qDebug() << "yeah";
+  //can i increase the size of this?
+  QPlainTextEdit* e = new QPlainTextEdit(parent);
   return e;
 }
 
 void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const { 
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
-  
-    qDebug() << o.text;
   
   if (o.checkState == Qt::Checked) {
     o.text = o.text.prepend("<s>").append("</s>");
@@ -87,4 +80,16 @@ std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem
   d->setDefaultFont(option.font);
   d->setHtml(option.text);
   return d;
+}
+
+bool NoteItemDelegate::eventFilter(QObject* editor, QEvent* event) {
+  if(event->type()==QEvent::KeyPress) {
+    QKeyEvent* e = dynamic_cast<QKeyEvent*>(event);
+    if(e->key()==Qt::Key_Return) {
+      QWidget* w = dynamic_cast<QWidget*>(editor);
+      emit commitData(w);
+      emit closeEditor(w);
+    }
+  }
+  return QStyledItemDelegate::eventFilter ( editor, event );
 }

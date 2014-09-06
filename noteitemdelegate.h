@@ -36,6 +36,7 @@ public:
   QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
   void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex &index) const;
   QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+  bool eventFilter(QObject* editor, QEvent* event);	//close on enter
 
 private:
   std::unique_ptr<QTextDocument> html(const QStyleOptionViewItem& option, const QModelIndex &index) const;
