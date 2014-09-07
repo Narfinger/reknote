@@ -113,6 +113,7 @@
    <addaction name="actionDeleteSpike"/>
    <addaction name="separator"/>
    <addaction name="actionDeleteNote"/>
+   <addaction name="actionCleanDone"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAddSpike">
@@ -137,7 +138,7 @@
   </action>
   <action name="actionDeleteNote">
    <property name="icon">
-    <iconset theme="edit-delete">
+    <iconset theme="list-remove">
      <normaloff/>
     </iconset>
    </property>
@@ -146,6 +147,14 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionCleanDone">
+   <property name="icon">
+    <iconset theme="user-trash"/>
+   </property>
+   <property name="text">
+    <string>Clean Done</string>
    </property>
   </action>
  </widget>

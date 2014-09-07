@@ -58,6 +58,7 @@ public slots:
 
   void load();
   void save();
+  void cleanDone();
   
 signals:
   void commit_waiting();

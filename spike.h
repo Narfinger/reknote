@@ -56,6 +56,7 @@ public:
   bool removeRows(int position, int rows, const QModelIndex& parent);
   QStringList mimeTypes() const  { return QStringList("text/plain"); };
   bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+  void cleanDone();
 
 signals:
   void saved() const;

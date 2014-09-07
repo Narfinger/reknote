@@ -149,6 +149,15 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
   return false;
 }
 
+void Spike::cleanDone() {
+  for(QStandardItem* it : findItems("", Qt::MatchContains)) {
+    if(it->data(Qt::CheckStateRole) == Qt::Checked) {
+      const QModelIndex i = it->index();
+      removeRow(i.row());
+    }
+  }
+}
+
 void Spike::setupSignals() {
   connect(this, &Spike::itemChanged,  this, &Spike::save);
   connect(this, &Spike::rowsInserted, this, &Spike::save);

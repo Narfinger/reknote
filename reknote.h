@@ -32,6 +32,7 @@ private slots:
   void activated(QModelIndex i);
   void commitWaiting();
   void commitFinished();
+  void cleanDone();
 };
 
 #endif // reknote_H

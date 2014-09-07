@@ -38,6 +38,7 @@ Reknote::Reknote() {
   connect(ui.actionAddSpike, &QAction::triggered, this, &Reknote::addSpike);
   connect(ui.actionDeleteSpike, &QAction::triggered, this, &Reknote::deleteSelectedSpike);
   connect(ui.actionDeleteNote, &QAction::triggered, this, &Reknote::deleteNote);
+  connect(ui.actionCleanDone, &QAction::triggered, this, &Reknote::cleanDone);
 
   
   //have better ui for when commited and when saving
@@ -131,3 +132,6 @@ void Reknote::commitFinished() {
   sbarText->setText("");
 }
 
+void Reknote::cleanDone() {
+  sm_->cleanDone();
+}

@@ -168,6 +168,12 @@ Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
   
 }
 
+void SpikesTreeModel::cleanDone() {
+  for(SpikePtr& p : s_) {
+    p->cleanDone();
+  }
+}
+
 void SpikesTreeModel::changed(const int index) {
   emit commit_waiting();
   if(index == -1) {
