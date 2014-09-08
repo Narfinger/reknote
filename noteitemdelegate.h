@@ -34,6 +34,7 @@ class NoteItemDelegate : public QStyledItemDelegate {
 public:
   NoteItemDelegate(QObject * parent = 0);
   QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  void setEditorData(QWidget* editor, const QModelIndex& index);
   void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex &index) const;
   QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
   bool eventFilter(QObject* editor, QEvent* event);	//close on enter

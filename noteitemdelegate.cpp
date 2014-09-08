@@ -33,13 +33,18 @@
 
 NoteItemDelegate::NoteItemDelegate(QObject * parent) : 
   QStyledItemDelegate(parent) {
-  }
+}
 
   
 QWidget* NoteItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const {
   //can i increase the size of this?
   QPlainTextEdit* e = new QPlainTextEdit(parent);
   return e;
+}
+
+void NoteItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) {
+  QPlainTextEdit* e = dynamic_cast<QPlainTextEdit*>(editor);
+  e->setPlainText(index.data().toString());
 }
 
 void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const { 
@@ -67,7 +72,7 @@ QSize NoteItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
   std::unique_ptr<QTextDocument> d = html(o, index);
-  return QSize(o.widget->size().width(), d->size().height());
+  return QSize(o.widget->size().width()-30, d->size().height());
 }
 
 std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem& option, const QModelIndex& index ) const {
@@ -76,7 +81,7 @@ std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem
   QTextOption op(d->defaultTextOption());
   op.setWrapMode(QTextOption::WordWrap);
   d->setDefaultTextOption(op);
-  d->setTextWidth(option.rect.width()-25);
+  d->setTextWidth(option.rect.width()-20);
   d->setDefaultFont(option.font);
   d->setHtml(option.text);
   return d;
@@ -89,7 +94,8 @@ bool NoteItemDelegate::eventFilter(QObject* editor, QEvent* event) {
       QWidget* w = dynamic_cast<QWidget*>(editor);
       emit commitData(w);
       emit closeEditor(w);
+      return true;
     }
   }
-  return QStyledItemDelegate::eventFilter ( editor, event );
+  return QStyledItemDelegate::eventFilter(editor, event);
 }
