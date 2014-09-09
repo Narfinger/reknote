@@ -24,7 +24,8 @@ private:
   QLabel* sbarText;
   QLabel* sbarIcon;
   
-private slots:    
+private slots:
+  void selectIndex(const QModelIndex& index);
   void addSpike();
   void deleteSelectedSpike(); 
   void deleteNote();

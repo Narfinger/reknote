@@ -53,8 +53,7 @@ Reknote::Reknote() {
   const int row = s.value("selected-spike-row").toInt();
   const int column = s.value("selected-spike-column").toInt();
   const QModelIndex i = sm_->index(row, column);
-  ui.spikestreeview->setCurrentIndex(i);
-  activated(i);
+  selectIndex(i);
 }
 
 Reknote::~Reknote() {
@@ -68,6 +67,11 @@ Reknote::~Reknote() {
   delete sm_;
 }
 
+void Reknote::selectIndex(const QModelIndex& index) {
+  ui.spikestreeview->setCurrentIndex(index);
+  activated(index);
+}
+
 void Reknote::addSpike() {
   QStandardItem* i = new QStandardItem("Edit Text");
   SpikePtr s(new Spike());
@@ -76,8 +80,7 @@ void Reknote::addSpike() {
   ui.spikestreeview->edit(i->index());
   statusBar()->showMessage("Added", 1*1000);
   
-  ui.spikestreeview->selectionModel()->select(i->index(), QItemSelectionModel::Clear);
-  ui.spikestreeview->setCurrentIndex(i->index());
+  selectIndex(i->index());
 }
 
 void Reknote::deleteSelectedSpike() {  
@@ -91,6 +94,9 @@ void Reknote::deleteSelectedSpike() {
   QMessageBox::StandardButton res = QMessageBox::question(this, "Do you want to delete?", question);
   if (res==QMessageBox::Yes) {
     sm_->removeItemAtIndex(i);
+    
+    const QModelIndex i = ui.spikestreeview->selectionModel()->selectedIndexes().first();
+    selectIndex(i);
   }
 }
 
