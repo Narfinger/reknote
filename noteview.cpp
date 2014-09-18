@@ -62,7 +62,9 @@ void NoteView::noteContextMenu(const QPoint& p) {
   const QModelIndex i = indexAt(p);
   const QStandardItem* it = dynamic_cast<QStandardItemModel*>(model())->itemFromIndex(i);
   if (i.isValid()) {
-    const QString filepath = i.data(Spike::filepathrole).toString();
+    const QString filepath = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + 
+	  "/" + i.data(Spike::filepathrole).toString();
+    qDebug() << filepath;
     if (!filepath.isEmpty()) {
       QDesktopServices::openUrl(QUrl::fromLocalFile(filepath));
     }

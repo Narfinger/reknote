@@ -132,15 +132,17 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
     const QUrl u(d);
     QFile f(u.toLocalFile());
     const QFileInfo fi(f);
+    const QDir home(QDir::homePath());
+
+    //relative path
     const QString newfilepath = dir_.path() + "/"+ fi.fileName();
     const QFileInfo nfi(newfilepath);
     if (nfi.exists()) return false;
     const bool res = f.copy(newfilepath);
     if (!res) return false;
 
-    //const QString itemstring = QString("<a href='file://%1'>%2</a>").arg(newfilepath).arg(fi.fileName());
     QStandardItem* it = new QStandardItem("Edit Text");
-    it->setData(newfilepath, filepathrole);
+    it->setData(dirName() + "/" + fi.fileName(), filepathrole);
     it->setIcon(iconFromFilepath(newfilepath));
     it->setCheckable(true);
     appendRow(it);
@@ -161,8 +163,6 @@ void Spike::cleanDone() {
 void Spike::setupSignals() {
   connect(this, &Spike::itemChanged,  this, &Spike::save);
   connect(this, &Spike::rowsInserted, this, &Spike::save);
-  //connect(this, &Spike::rowsRemoved,  this, &Spike::save);
-  //connect(this, &Spike::rowsAboutToBeRemoved, this, &Spike::removed);
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
