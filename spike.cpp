@@ -168,7 +168,9 @@ void Spike::setupSignals() {
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
   QDomElement e = d.createElement("note");
   e.setAttribute("checked", data(index, Qt::CheckStateRole).toBool());
-  e.setAttribute("file", data(index, filepathrole).toString());
+
+  if (data(index, filepathrole).isValid())
+    e.setAttribute("file", data(index, filepathrole).toString());
 
   QDomText text = d.createTextNode(data(index, Qt::DisplayRole).toString());
   e.appendChild(text);
@@ -176,17 +178,21 @@ const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& in
 }
 
 void Spike::insertElement(const QDomNode& n) {
-  const QString checked = n.attributes().namedItem("checked").toAttr().value();
-  const Qt::CheckState bchecked = checked=="1" ? Qt::Checked: Qt::Unchecked;
-
-  const QString filepath = n.attributes().namedItem("file").toAttr().value();
+  const QDomNamedNodeMap attrs = n.attributes();
 
   const QString text = n.firstChild().toText().nodeValue();
   QStandardItem* i = new QStandardItem(text);
+
+  const QString checked = attrs.namedItem("checked").toAttr().value();
+  const Qt::CheckState bchecked = checked=="1" ? Qt::Checked: Qt::Unchecked;
   i->setCheckState(bchecked);
-  i->setData(filepath, filepathrole);
-  if(!filepath.isEmpty()) {
-    i->setIcon(iconFromFilepath(filepath));
+
+  if (attrs.contains("file")) {
+    const QString filepath = attrs.namedItem("file").toAttr().value();
+    i->setData(filepath, filepathrole);
+    if(!filepath.isEmpty()) {
+      i->setIcon(iconFromFilepath(filepath));
+    }
   }
 
   appendRow(i);

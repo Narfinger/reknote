@@ -25,7 +25,7 @@
 
 #include <QListView>
 #include <QMouseEvent>
-
+class QStandardItem;
 class NoteView : public QListView {
     Q_OBJECT
 
@@ -35,6 +35,9 @@ public:
     
   void mouseDoubleClickEvent(QMouseEvent* event);
   void noteContextMenu(const QPoint&);
+
+private:
+  void openFile(const QStandardItem* item);
 };
 
 #endif // NOTEVIEW_H
