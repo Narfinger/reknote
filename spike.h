@@ -35,6 +35,7 @@ class Spike : public QStandardItemModel {
     Q_OBJECT
 public:
   static const int filepathrole;
+  static const int colorrole;
 
   Spike(QObject* parent = 0);
   Spike(const QString& reldirandname, QObject* parent = 0);	//loads the spike with reldirandname set
@@ -44,14 +45,16 @@ public:
 
   void load();
 
-  const QString name() const { return name_; };
+  const QString name() const 			{ return name_; };
   void setName(const QString& name);
-  const QString dir() const { return dir_.path(); };
-  const QString dirName() const { return dir_.dirName(); };
+  const QString dir() const 			{ return dir_.path(); };
+  const QString dirName() const 		{ return dir_.dirName(); };
   void setRelativeDir(QString dir);
-  void setRelDirAndName(const QString& n) { setRelativeDir(n); setName(n); };
-  const QStringList& deletedFiles() const { return deletedfiles_; };
-  void clearDeletedFiles() { deletedfiles_.clear(); };
+  void setRelDirAndName(const QString& n) 	{ setRelativeDir(n); setName(n); };
+  const QStringList& deletedFiles() const 	{ return deletedfiles_; };
+  void clearDeletedFiles() 			{ deletedfiles_.clear(); };
+  void setColor(const QModelIndex& index, const QColor& color) { setData(index, color, colorrole); };
+  void resetColor(const QModelIndex& index);
 
   bool removeRows(int position, int rows, const QModelIndex& parent);
   QStringList mimeTypes() const  { return QStringList("text/plain"); };

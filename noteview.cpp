@@ -24,8 +24,11 @@
 #include "noteitemdelegate.h"
 #include "spike.h"
 
+#include <QAction>
+#include <QColorDialog>
 #include <QStandardItemModel>
 #include <QDesktopServices>
+#include <QMenu>
 #include <QMimeData>
 #include <QtDebug>
 #include <QUrl>
@@ -60,17 +63,52 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
 
 void NoteView::noteContextMenu(const QPoint& p) {
   const QModelIndex i = indexAt(p);
-  const QStandardItem* it = dynamic_cast<QStandardItemModel*>(model())->itemFromIndex(i);
   if (i.isValid()) {
-    if (!i.data(Spike::filepathrole).isNull())
-      openFile(it);
+    QMenu* menu = new QMenu();
+    if (!i.data(Spike::filepathrole).isNull()) {
+      QAction* act = new QAction("Open", menu);
+      connect(act, &QAction::triggered, [=]() { openFile(i); });
+      menu->addAction(act);
+    }
+
+    { //color
+      QAction* act = new QAction("Set Color", menu);
+      connect(act, &QAction::triggered, [=]() { setColor(i); });
+      menu->addAction(act);
+
+      QAction* res = new QAction("Reset Color", menu);
+      connect(res, &QAction::triggered, [=]() { resetColor(i); });
+      menu->addAction(res);
+    }
+
+    menu->exec(this->mapToGlobal(p));
   }
 }
 
-void NoteView::openFile(const QStandardItem* it) {
+void NoteView::openFile(const QModelIndex& index) {
   const QString filepath = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0) + 
-	    "/" + it->data(Spike::filepathrole).toString();
+	    "/" + index.data(Spike::filepathrole).toString();
   if (!filepath.isEmpty()) {
     QDesktopServices::openUrl(QUrl::fromLocalFile(filepath));
   }
+}
+
+void NoteView::setColor(const QModelIndex& index) {
+  QColor defcol = Qt::white;
+  const QVariant colvar = model()->data(index, Spike::colorrole);
+  if (colvar.isValid())
+    defcol.setNamedColor(colvar.toString());
+
+  const QColor col = QColorDialog::getColor(defcol, this, "Select Color for item");
+  if (col.isValid()) {
+    Spike* spike = dynamic_cast<Spike*>(model());
+    if (spike!=nullptr)
+      spike->setColor(index, col);
+  }
+}
+
+void NoteView::resetColor(const QModelIndex& index) {
+  Spike* spike = dynamic_cast<Spike*>(model());
+  if (spike!=nullptr)
+    spike->resetColor(index);
 }

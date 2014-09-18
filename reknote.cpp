@@ -124,6 +124,7 @@ void Reknote::spikestreeContextMenu(const QPoint& point) const {
 }
 
 void Reknote::activated(QModelIndex i) {
+  if (sm_->rowCount()==0) return;
   const SpikePtr p = sm_->getPointerFromIndex(i);
   ui.noteView->setModel(p.data());
 }

@@ -37,7 +37,9 @@ public:
   void noteContextMenu(const QPoint&);
 
 private:
-  void openFile(const QStandardItem* item);
+  void openFile(const QModelIndex& index);
+  void setColor(const QModelIndex& index);
+  void resetColor(const QModelIndex& index);
 };
 
 #endif // NOTEVIEW_H

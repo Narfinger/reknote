@@ -30,6 +30,7 @@
 
 const int Spike::maxdirname = 10;
 const int Spike::filepathrole = Qt::UserRole + 1;
+const int Spike::colorrole    = Qt::UserRole + 2;
 
 Spike::Spike(QObject* parent) : QStandardItemModel(parent), dir_(QDir::root()) {
   setupSignals();
@@ -107,6 +108,11 @@ void Spike::setRelativeDir(QString dir) {
   }
 }
 
+void Spike::resetColor(const QModelIndex& index) {
+  if (data(index, colorrole).isValid())	//if not valid, don't reset do avoid saving
+    setData(index, QVariant(), colorrole);
+}
+
 bool Spike::removeRows(int position, int rows, const QModelIndex& parent) {
   QStandardItem* it = itemFromIndex(parent);
   for (int i = position + rows - 1; i >= position; i--) {
@@ -172,6 +178,9 @@ const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& in
   if (data(index, filepathrole).isValid())
     e.setAttribute("file", data(index, filepathrole).toString());
 
+  if (data(index, colorrole).isValid())
+    e.setAttribute("color", data(index, colorrole).toString());
+
   QDomText text = d.createTextNode(data(index, Qt::DisplayRole).toString());
   e.appendChild(text);
   return e;
@@ -193,6 +202,12 @@ void Spike::insertElement(const QDomNode& n) {
     if(!filepath.isEmpty()) {
       i->setIcon(iconFromFilepath(filepath));
     }
+  }
+
+  if (attrs.contains("color")) {
+    const QString colstring = attrs.namedItem("color").toAttr().value();
+    const QColor col(colstring);
+    i->setData(col, colorrole);
   }
 
   appendRow(i);
