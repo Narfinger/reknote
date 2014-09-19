@@ -30,6 +30,7 @@
 #include <QTextOption>
 
 #include "noteitemdelegate.h"
+#include "spike.h"
 
 NoteItemDelegate::NoteItemDelegate(QObject * parent) : 
   QStyledItemDelegate(parent) {
@@ -50,10 +51,16 @@ void NoteItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) 
 void NoteItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex &index) const { 
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
-  
+
   if (o.checkState == Qt::Checked) {
     o.text = o.text.prepend("<s>").append("</s>");
   }
+  const QVariant col = index.data(Spike::colorrole);
+  if (col.isValid()) {
+    const QString style = QString("<span style=\"background-color: %1\">").arg(col.toString());
+    o.text.prepend(style).append("</span>");
+  }
+
   std::unique_ptr<QTextDocument> d = html(o, index);
   
   //render
