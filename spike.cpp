@@ -168,7 +168,6 @@ void Spike::cleanDone() {
 
 void Spike::setupSignals() {
   connect(this, &Spike::itemChanged,  this, &Spike::save);
-  connect(this, &Spike::rowsInserted, this, &Spike::save);
 }
 
 const QDomElement Spike::constructElement(QDomDocument& d, const QModelIndex& index) const {
