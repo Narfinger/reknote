@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTreeWidgetItem>
+#include <QUndoView>
 
 #include "reknote.h"
 
@@ -40,7 +41,8 @@ Reknote::Reknote() {
   connect(ui.actionDeleteNote, &QAction::triggered, this, &Reknote::deleteNote);
   connect(ui.actionCleanDone, &QAction::triggered, this, &Reknote::cleanDone);
 
-  
+  connect(ui.actionUndo, &QAction::triggered, ui.noteView, &NoteView::undo);
+
   //have better ui for when commited and when saving
   connect(sm_, &SpikesTreeModel::commit_waiting, this, &Reknote::commitWaiting);
   connect(sm_, &SpikesTreeModel::commit_done, this, &Reknote::commitFinished);
@@ -101,11 +103,7 @@ void Reknote::deleteSelectedSpike() {
 }
 
 void Reknote::deleteNote() {
-  const QModelIndexList li = ui.noteView->selectionModel()->selectedIndexes();
-  QAbstractItemModel* m = ui.noteView->model();
-  for(const QModelIndex& i : li) {
-    m->removeRow(i.row());
-  }
+  ui.noteView->deleteNote();
 }
 
 void Reknote::spikestreeContextMenu(const QPoint& point) const {

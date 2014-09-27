@@ -20,6 +20,7 @@
  *
  */
 
+#include "notecommands.h"
 #include "noteview.h"
 #include "noteitemdelegate.h"
 #include "spike.h"
@@ -52,12 +53,15 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
       QListView::mouseDoubleClickEvent(event);  
       return;
     }
-    
+
     QStandardItem* t = new QStandardItem("enter text");
     t->setCheckable(true);
     m->appendRow(t);
     QModelIndex ni = t->index();
     edit(ni);
+
+    QUndoCommand* addcommand = new NoteCommandAdd(t, m);
+    ustack_.push(addcommand);
   }
 }
 
@@ -82,6 +86,18 @@ void NoteView::noteContextMenu(const QPoint& p) {
     }
 
     menu->exec(this->mapToGlobal(p));
+  }
+}
+
+void NoteView::deleteNote() {
+  const QModelIndexList li = selectionModel()->selectedIndexes();
+  QStandardItemModel* m = dynamic_cast<QStandardItemModel*>(model());
+  for(const QModelIndex& i : li) {
+    const QStandardItem* it = m->itemFromIndex(i);
+    QUndoCommand* undo = new NoteCommandDelete(it, i, m);
+
+    m->removeRow(i.row());
+    ustack_.push(undo);
   }
 }
 

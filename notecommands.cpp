@@ -20,37 +20,15 @@
  *
  */
 
-#ifndef NOTEVIEW_H
-#define NOTEVIEW_H
+#include "notecommands.h"
 
-#include <QListView>
-#include <QMouseEvent>
-#include <QUndoStack>
-class QStandardItem;
-class NoteView : public QListView {
-    Q_OBJECT
+NoteCommandAdd::NoteCommandAdd ( QStandardItem* item, QStandardItemModel* spike ) : 
+  QUndoCommand(), index_(spike->indexFromItem(item)), spike_(spike) { 
+  setText("Create Note");
+}
 
-public:
-  NoteView(QWidget* parent = 0);
-  ~NoteView();
-
-  void mouseDoubleClickEvent(QMouseEvent* event);
-  void noteContextMenu(const QPoint&);
-  void deleteNote();
-
-  QUndoStack ustack_;	//tmp public
-
-public slots:
-  /** we kind of cheat with the whole undo command stack, our stuff will not support a redo as getting all needed information
-    into the QUndoCommands seems to be difficult and a nightmare of who onws what, so we just clear if you every want to redo
-    */
-  void undo() { ustack_.undo();};
-  void redo() { ustack_.clear(); };
-
-private:
-  void openFile(const QModelIndex& index);
-  void setColor(const QModelIndex& index);
-  void resetColor(const QModelIndex& index);
-};
-
-#endif // NOTEVIEW_H
+NoteCommandDelete::NoteCommandDelete(const QStandardItem* item, const QModelIndex& index, QStandardItemModel* spike):
+  QUndoCommand(), index_(index), spike_(spike) {
+  setText("Delete Note");
+  item_ = std::unique_ptr<QStandardItem>(item->clone());
+}

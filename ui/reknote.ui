@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>698</width>
-    <height>488</height>
+    <height>549</height>
    </rect>
   </property>
   <property name="font">
@@ -114,6 +114,7 @@
    <addaction name="separator"/>
    <addaction name="actionDeleteNote"/>
    <addaction name="actionCleanDone"/>
+   <addaction name="actionUndo"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAddSpike">
@@ -157,6 +158,26 @@
    </property>
    <property name="text">
     <string>Clean Done</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset theme="edit-undo">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset theme="edit-redo">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
    </property>
   </action>
  </widget>

@@ -15,7 +15,8 @@ include_directories(${LIBGIT2_INCLUDE_DIR})
 
 set(reknote_SRCS 
   gitrepository.cpp
-  noteitemdelegate.cpp 
+  noteitemdelegate.cpp
+  notecommands.cpp
   noteview.cpp 
   spike.cpp 
   spikestreemodel.cpp 
