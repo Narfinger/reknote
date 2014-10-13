@@ -114,7 +114,6 @@ void Spike::resetColor(const QModelIndex& index) {
 }
 
 bool Spike::removeRows(int position, int rows, const QModelIndex& parent) {
-  QStandardItem* it = itemFromIndex(parent);
   for (int i = position + rows - 1; i >= position; i--) {
     QModelIndex child = index(i, 0, parent);
     const QString filepath = child.data(filepathrole).toString();
