@@ -32,13 +32,15 @@
 #include "noteitemdelegate.h"
 #include "spike.h"
 
+const int NoteItemDelegate::PADDING_WIDTH = 20;
+const int NoteItemDelegate::EDIT_DEFAULT_SCALE = 3;
+const QString NoteItemDelegate::EDIT_TEXT = "enter text";
+
 NoteItemDelegate::NoteItemDelegate(QObject * parent) : 
   QStyledItemDelegate(parent) {
 }
-
   
 QWidget* NoteItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-  //can i increase the size of this?
   QPlainTextEdit* e = new QPlainTextEdit(parent);
   return e;
 }
@@ -79,7 +81,11 @@ QSize NoteItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
   QStyleOptionViewItem o = option;
   initStyleOption(&o, index);
   std::unique_ptr<QTextDocument> d = html(o, index);
-  return QSize(o.widget->size().width()-30, d->size().height());
+  int scale = 1;
+  if(o.text == EDIT_TEXT) {	//when new text we want a bit more space
+    scale = EDIT_DEFAULT_SCALE;
+  }
+  return QSize(o.widget->size().width()-PADDING_WIDTH, d->size().height()*scale);
 }
 
 std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem& option, const QModelIndex& index ) const {
@@ -88,7 +94,7 @@ std::unique_ptr<QTextDocument> NoteItemDelegate::html(const QStyleOptionViewItem
   QTextOption op(d->defaultTextOption());
   op.setWrapMode(QTextOption::WordWrap);
   d->setDefaultTextOption(op);
-  d->setTextWidth(option.rect.width()-20);
+  d->setTextWidth(option.rect.width()-PADDING_WIDTH);
   d->setDefaultFont(option.font);
   d->setHtml(option.text);
   return d;

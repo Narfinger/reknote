@@ -41,6 +41,9 @@ public:
 
 private:
   std::unique_ptr<QTextDocument> html(const QStyleOptionViewItem& option, const QModelIndex &index) const;
+  static const int PADDING_WIDTH;
+  static const int EDIT_DEFAULT_SCALE;
+  static const QString EDIT_TEXT;
 };
 
 #endif // NOTEITEMDELEGATE_H
