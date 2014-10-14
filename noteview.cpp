@@ -54,6 +54,8 @@ void NoteView::mouseDoubleClickEvent(QMouseEvent* event) {
       return;
     }
 
+    emit stopCommitTimer();
+
     QStandardItem* t = new QStandardItem("enter text");
     t->setCheckable(true);
     m->appendRow(t);

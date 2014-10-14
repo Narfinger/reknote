@@ -23,6 +23,7 @@ Reknote::Reknote() {
   ui.spikestreeview->setModel(sm_);
   ui.spikestreeview->expandAll();
   ui.spikestreeview->header()->hide();
+  connect(ui.noteView, &NoteView::stopCommitTimer, sm_, &SpikesTreeModel::stopCommitTimer);
   
   QIcon* icon = new QIcon(QIcon::fromTheme("document-save"));
   sbarIcon = new QLabel();

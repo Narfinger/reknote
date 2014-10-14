@@ -59,6 +59,7 @@ public slots:
   void load();
   void save();
   void cleanDone();
+  void stopCommitTimer() { committimer_.stop(); };
   
 signals:
   void commit_waiting();

@@ -40,6 +40,9 @@ public:
 
   QUndoStack ustack_;	//tmp public
 
+signals:
+  void stopCommitTimer();
+
 public slots:
   /** we kind of cheat with the whole undo command stack, our stuff will not support a redo as getting all needed information
     into the QUndoCommands seems to be difficult and a nightmare of who onws what, so we just clear if you every want to redo
