@@ -50,7 +50,7 @@ Spike::Spike(const QString& reldirandname, QObject* parent) : QStandardItemModel
 Qt::ItemFlags Spike::flags(const QModelIndex& index) const {
   if (!index.isValid()) return Qt::ItemIsDropEnabled;
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable 
-    |Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+    |Qt::ItemIsDragEnabled;
 }
 
 void Spike::save() const {
