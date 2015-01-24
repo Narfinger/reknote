@@ -50,6 +50,8 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
     Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
+    QStringList mimeTypes() const  { return QStringList("text/note"); };
+    bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
     
     static const int modelindexrole;
     

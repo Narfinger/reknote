@@ -21,6 +21,7 @@
  */
 
 #include <QDir>
+#include <QDebug>
 #include <QFileIconProvider>
 #include <QMimeData>
 #include <QMimeDatabase>
@@ -130,7 +131,7 @@ bool Spike::removeRows(int position, int rows, const QModelIndex& parent) {
 
 bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
   if (action == Qt::IgnoreAction) return true;
-  if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column ,parent);
+  if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column, parent);
 
   if (data->hasFormat("text/uri-list")) {
     const QString d(data->data("text/uri-list"));
@@ -154,6 +155,20 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
     return true;
   }
   return false;
+}
+
+QMimeData* Spike::mimeData(const QModelIndexList& indexes) const {
+  QMimeData* m = new QMimeData();
+  QByteArray encodedData;
+  QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+  for (const QModelIndex& index: indexes) {
+    if (index.isValid()) {
+      stream << *item(index.row(), index.column());
+    }
+  }
+  m->setData("text/note", encodedData);
+  return m;
 }
 
 void Spike::cleanDone() {

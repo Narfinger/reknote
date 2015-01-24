@@ -41,7 +41,7 @@ public:
   Spike(const QString& reldirandname, QObject* parent = 0);	//loads the spike with reldirandname set
   Qt::ItemFlags flags(const QModelIndex &index) const;
   Qt::DropActions supportedDragActions() const { return Qt::MoveAction; };
-  Qt::DropActions supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; };
+  Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };
 
   void load();
 
@@ -56,9 +56,10 @@ public:
   void setColor(const QModelIndex& index, const QColor& color) { setData(index, color, colorrole); };
   void resetColor(const QModelIndex& index);
 
-  bool removeRows(int position, int rows, const QModelIndex& parent);
-  QStringList mimeTypes() const  { return QStringList("text/plain"); };
+  bool removeRows(int position, int rows, const QModelIndex& parent = QModelIndex());
+  QStringList mimeTypes() const  { return QStringList("text/note"); };
   bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+  QMimeData* mimeData(const QModelIndexList& indexes) const;
   void cleanDone();
 
 signals:

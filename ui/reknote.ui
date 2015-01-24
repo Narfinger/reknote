@@ -45,7 +45,10 @@
         </font>
        </property>
        <property name="dragDropMode">
-        <enum>QAbstractItemView::InternalMove</enum>
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::MoveAction</enum>
        </property>
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>
@@ -69,11 +72,14 @@
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
+       <property name="dragDropOverwriteMode">
+        <bool>false</bool>
+       </property>
        <property name="dragDropMode">
         <enum>QAbstractItemView::DragDrop</enum>
        </property>
        <property name="defaultDropAction">
-        <enum>Qt::IgnoreAction</enum>
+        <enum>Qt::MoveAction</enum>
        </property>
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>

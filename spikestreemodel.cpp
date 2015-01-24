@@ -21,6 +21,8 @@
  */
 
 #include <QDir>
+#include <QByteArray>
+#include <QDataStream>
 #include <QTextStream>
 
 #include "gitrepository.h"
@@ -45,23 +47,23 @@ void SpikesTreeModel::load() {
   QString path = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0);
   QFile file(path+"/spikestree.xml");
   if (!file.exists()) return;
-  
+
   file.open(QIODevice::ReadOnly);
   QTextStream out;
   out.setDevice(&file);
-  
+
   QDomDocument doc;
   QString error;
   int errorline;
   int errorcolumn;
   doc.setContent(&file, false, &error, &errorline, &errorcolumn);
   QDomNodeList spikelist = doc.elementsByTagName("spikes").at(0).childNodes();
-  
+
   loadXml(spikelist, invisibleRootItem());
-  
+
   out.flush();
   file.close();
-  
+
   connect(this, &SpikesTreeModel::itemChanged, this, [=]() {this->changed(-1); }); //if we finished loading we can add this signal
 }
 
@@ -92,7 +94,7 @@ void SpikesTreeModel::save() {
   QFile file(path +"/spikestree.xml");
   file.open(QIODevice::WriteOnly | QIODevice::Truncate);
   QTextStream out(&file);
-    
+
   QDomDocument d("spikes");
   QDomElement e = d.createElement("spikes");
   saveChildrenToXml(d, e, invisibleRootItem());
@@ -134,7 +136,7 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   const int pos = data(index, SpikesTreeModel::modelindexrole).toInt();
   SpikePtr spike = s_[pos];
   QDir sdir(spike->dir());
-  
+
   removeRow(row, p);
   sdir.removeRecursively();
 
@@ -167,6 +169,29 @@ Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
     | Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
   
 }
+
+bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
+  if (action == Qt::IgnoreAction) return true;
+  if (data->hasFormat("text/note")) {
+    if (row != -1 || column != -1) return false;  //otherwise the parent is not the correct index
+
+    SpikePtr s = getPointerFromIndex(parent);
+
+    QByteArray b = data->data("text/note");
+    QDataStream stream(&b, QIODevice::ReadOnly);
+    QList<QStandardItem*> l;
+    while (!stream.atEnd()) {
+      QStandardItem* item = new QStandardItem();
+      stream >> *item;
+      l << item;
+    }
+    s->appendRow(l);
+    return true;
+  }
+  if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column, parent);
+  return false;
+}
+
 
 void SpikesTreeModel::cleanDone() {
   for(SpikePtr& p : s_) {
