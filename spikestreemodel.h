@@ -39,7 +39,7 @@ class SpikesTreeModel : public QStandardItemModel
     Q_OBJECT
 
 public:  
-    SpikesTreeModel(QObject *parent = 0);
+    SpikesTreeModel(QObject *parent = nullptr);
     ~SpikesTreeModel();
    
     void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
@@ -48,10 +48,10 @@ public:
     void removeItemAtIndex(const QModelIndex& index);
     const SpikePtr getPointerFromIndex(const QModelIndex& index) const;
 
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    Qt::DropActions supportedDropActions() const { return Qt::MoveAction; };  
-    QStringList mimeTypes() const  { return QStringList("text/note"); };
-    bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::DropActions supportedDropActions() const override { return Qt::MoveAction; };  
+    QStringList mimeTypes() const override  { return QStringList("text/note"); };
+    bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) override;
     
     static const int modelindexrole;
     

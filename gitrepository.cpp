@@ -32,15 +32,15 @@ bool GitRepository::commitIndex(GitIndex& index) {
 
 bool GitRepository::commitIndex(git_index* index) {
   //  write git index
-  git_signature *sig = NULL;
+  git_signature *sig = nullptr;
   git_oid tree_id;
   git_oid commit_id;
-  git_tree *tree = NULL;
+  git_tree *tree = nullptr;
 
   int error = git_signature_now(&sig, "AutoGit", "auto@localhost");
   if (!gitErrorCheck(error)) return false;
 
-  git_commit * commit = NULL; // parent
+  git_commit * commit = nullptr; // parent
   git_oid oid_parent_commit;  // the SHA1 for last commit
 
   error = git_reference_name_to_id( &oid_parent_commit, repo_, "HEAD" );
@@ -62,7 +62,7 @@ bool GitRepository::commitIndex(git_index* index) {
   const QString message("Auto commit");
   QByteArray commitmessageba = message.toUtf8();
   const char *commitmessageCString = commitmessageba.data();
-  error = git_commit_create(&commit_id, repo_, "HEAD", sig, sig, NULL, commitmessageCString, tree, 1, parentarray);
+  error = git_commit_create(&commit_id, repo_, "HEAD", sig, sig, nullptr, commitmessageCString, tree, 1, parentarray);
   if (!gitErrorCheck(error)) return false;
   
   git_signature_free(sig);
@@ -81,18 +81,18 @@ void GitRepository::createRepository() {
   int error = git_repository_init(&repo_, repodir_, false);
   if(!gitErrorCheck(error)) return;
   
-  git_signature *sig = NULL;
-  git_index *index = NULL;
+  git_signature *sig = nullptr;
+  git_index *index = nullptr;
   git_oid tree_id;
   git_oid commit_id;
-  git_tree *tree = NULL;
+  git_tree *tree = nullptr;
 
   // no error handling at the moment
   git_signature_now(&sig, "AutoGit", "auto@localhost");
   git_repository_index(&index, repo_);
   git_index_write_tree(&tree_id, index);
   git_tree_lookup(&tree, repo_, &tree_id);
-  git_commit_create_v(&commit_id, repo_, "HEAD", sig, sig, NULL, "Initial commit", tree, 0);
+  git_commit_create_v(&commit_id, repo_, "HEAD", sig, sig, nullptr, "Initial commit", tree, 0);
 
   git_signature_free(sig);
   git_index_free(index);
@@ -113,7 +113,7 @@ void GitIndex::add(const SpikePtr& s) {
     char* baCString = ba.data();
     git_strarray arr = { &baCString, 1};
     
-    int error = git_index_add_all(index_, &arr, 0,0,0);
+    int error = git_index_add_all(index_, &arr, 0,nullptr,nullptr);
     if (error <0) { 
       qDebug() << "error with adding spike";
       gitErrorHandling();
@@ -122,6 +122,7 @@ void GitIndex::add(const SpikePtr& s) {
 }
 
 void GitIndex::add(const SpikesTreeModel& stm) {
+  Q_UNUSED(stm);
   QMutexLocker l(&(repo_->gitMutex));
   if (index_!=nullptr) {
     const QString path = "spikestree.xml";

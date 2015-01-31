@@ -31,10 +31,10 @@ class NoteView : public QListView {
     Q_OBJECT
 
 public:
-  NoteView(QWidget* parent = 0);
+  NoteView(QWidget* parent = nullptr);
   ~NoteView();
 
-  void mouseDoubleClickEvent(QMouseEvent* event);
+  void mouseDoubleClickEvent(QMouseEvent* event) override;
   void noteContextMenu(const QPoint&);
   void deleteNote();
 

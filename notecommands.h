@@ -39,8 +39,8 @@ public:
     NoteCommandAdd() {};
     NoteCommandAdd(QStandardItem* item, QStandardItemModel* spike);
     ~NoteCommandAdd() {};
-    virtual void redo() {};
-    virtual void undo() { spike_->removeRow(index_.row()); };
+    virtual void redo() override {};
+    virtual void undo() override { spike_->removeRow(index_.row()); };
 
 private:
   Q_DISABLE_COPY(NoteCommandAdd)
@@ -51,10 +51,10 @@ private:
 class NoteCommandDelete : public QUndoCommand {
 public:
     NoteCommandDelete() {};
-    NoteCommandDelete(const QStandardItem* item, const QModelIndex& index, QStandardItemModel* spike);
+    NoteCommandDelete(const QStandardItem* item, QModelIndex  index, QStandardItemModel* spike);
     ~NoteCommandDelete() {};
-    virtual void redo() {};
-    virtual void undo() { spike_->insertRow(index_.row(), item_.release()); };
+    virtual void redo() override {};
+    virtual void undo() override { spike_->insertRow(index_.row(), item_.release()); };
 
 private:
   Q_DISABLE_COPY(NoteCommandDelete)

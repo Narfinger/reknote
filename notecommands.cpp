@@ -27,8 +27,8 @@ NoteCommandAdd::NoteCommandAdd ( QStandardItem* item, QStandardItemModel* spike 
   setText("Create Note");
 }
 
-NoteCommandDelete::NoteCommandDelete(const QStandardItem* item, const QModelIndex& index, QStandardItemModel* spike):
-  QUndoCommand(), index_(index), spike_(spike) {
+NoteCommandDelete::NoteCommandDelete(const QStandardItem* item, QModelIndex  index, QStandardItemModel* spike):
+  QUndoCommand(), index_(std::move(index)), spike_(spike) {
   setText("Delete Note");
   item_ = std::unique_ptr<QStandardItem>(item->clone());
 }

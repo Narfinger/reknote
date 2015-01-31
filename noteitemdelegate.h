@@ -32,12 +32,12 @@ class NoteItemDelegate : public QStyledItemDelegate {
     Q_OBJECT
 
 public:
-  NoteItemDelegate(QObject * parent = 0);
-  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  NoteItemDelegate(QObject * parent = nullptr);
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
   void setEditorData(QWidget* editor, const QModelIndex& index);
-  void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex &index) const;
-  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-  bool eventFilter(QObject* editor, QEvent* event);	//close on enter
+  void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex &index) const override;
+  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  bool eventFilter(QObject* editor, QEvent* event) override;	//close on enter
 
 private:
   std::unique_ptr<QTextDocument> html(const QStyleOptionViewItem& option, const QModelIndex &index) const;
