@@ -70,6 +70,22 @@ bool GitRepository::commitIndex(git_index* index) {
   return true;
 }
 
+void GitRepository::walkHistory() {
+  git_revwalk *walk;
+  git_revwalk_new(&walk, repo_);
+  git_revwalk_sorting(walk, GIT_SORT_TOPOLOGICAL | GIT_SORT_TIME);
+  git_revwalk_push_head(walk);
+  git_revwalk_hide_glob(walk, "tags/*");
+  git_oid oid;
+  while (git_revwalk_next(&oid, walk) == 0) {
+    git_commit* c;
+    git_commit_lookup(&c, repo_, &oid);
+    qDebug() << git_commit_time(c);
+    git_commit_free(c);
+  }
+  git_revwalk_free(walk);
+}
+
 bool GitRepository::openRepository() {
   QMutexLocker l(&gitMutex);
   int error = git_repository_open(&repo_, repodir_);

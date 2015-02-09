@@ -20,7 +20,7 @@ public:
   GitRepository(const QString& repo);
   ~GitRepository();
   bool commitIndex(GitIndex& index);
-  
+  void walkHistory();
 
 private:
   static QMutex gitMutex;
