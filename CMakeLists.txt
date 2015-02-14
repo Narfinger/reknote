@@ -15,6 +15,7 @@ include_directories(${LIBGIT2_INCLUDE_DIR})
 
 set(reknote_SRCS 
   gitrepository.cpp
+  history.cpp
   noteitemdelegate.cpp
   notecommands.cpp
   noteview.cpp 
@@ -24,6 +25,7 @@ set(reknote_SRCS
   main.cpp
 )
 SET(reknote_FORMS
+  ui/history.ui
   ui/reknote.ui
 )
 QT5_WRAP_UI(reknote_FORMS_HDRS ${reknote_FORMS})

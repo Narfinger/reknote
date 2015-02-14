@@ -6,6 +6,8 @@
 #include <QSharedPointer>
 #include <QString>
 
+#include <memory>
+
 extern "C" {
 #include <git2.h>
 }
@@ -13,6 +15,10 @@ extern "C" {
 class Spike;
 class SpikesTreeModel;
 class GitIndex;
+class GitCommit;
+
+
+typedef QSharedPointer<GitCommit> GitCommitPtr;
 
 class GitRepository {
   friend class GitIndex;
@@ -20,7 +26,7 @@ public:
   GitRepository(const QString& repo);
   ~GitRepository();
   bool commitIndex(GitIndex& index);
-  void walkHistory();
+  QList<QPair<QDateTime, GitCommitPtr> > walkHistory();
 
 private:
   static QMutex gitMutex;
@@ -50,6 +56,16 @@ private:
   GitIndex() {};
   QSharedPointer<GitRepository> repo_;
   git_index* index_;
+};
+
+class GitCommit {
+public:
+  GitCommit(git_commit* c);
+  ~GitCommit();
+  
+private:
+  GitCommit() {};
+  git_commit* commit_;
 };
 
 static void gitErrorHandling() {

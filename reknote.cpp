@@ -5,6 +5,8 @@
 #include <QTreeWidgetItem>
 #include <QUndoView>
 
+
+#include "history.h"
 #include "reknote.h"
 
 #include "gitrepository.h"
@@ -41,10 +43,11 @@ Reknote::Reknote() {
   connect(ui.actionDeleteSpike, &QAction::triggered, this, &Reknote::deleteSelectedSpike);
   connect(ui.actionDeleteNote, &QAction::triggered, this, &Reknote::deleteNote);
   connect(ui.actionCleanDone, &QAction::triggered, this, &Reknote::cleanDone);
+  connect(ui.actionHistory, &QAction::triggered, this, &Reknote::showHistory);
 
   connect(ui.actionUndo, &QAction::triggered, ui.noteView, &NoteView::undo);
 
-  //have better ui for when commited and when saving
+  //have better ui for when commited and when savingkolk
   connect(sm_, &SpikesTreeModel::commit_waiting, this, &Reknote::commitWaiting);
   connect(sm_, &SpikesTreeModel::commit_done, this, &Reknote::commitFinished);
   sbarIcon->setVisible(false);
@@ -105,6 +108,11 @@ void Reknote::deleteSelectedSpike() {
 
 void Reknote::deleteNote() {
   ui.noteView->deleteNote();
+}
+
+void Reknote::showHistory() {
+  History d(this);
+  d.exec();
 }
 
 void Reknote::spikestreeContextMenu(const QPoint& point) const {

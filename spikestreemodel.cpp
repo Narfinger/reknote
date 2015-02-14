@@ -38,6 +38,8 @@ SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
   //setup commit times
   committimer_.setSingleShot(true);
   connect(&committimer_, &QTimer::timeout, this, &SpikesTreeModel::commit);
+  
+  repo_->walkHistory();
 }
 
 SpikesTreeModel::~SpikesTreeModel() {

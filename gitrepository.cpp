@@ -70,20 +70,25 @@ bool GitRepository::commitIndex(git_index* index) {
   return true;
 }
 
-void GitRepository::walkHistory() {
+QList<QPair<QDateTime, GitCommitPtr> > GitRepository::walkHistory() {
   git_revwalk *walk;
   git_revwalk_new(&walk, repo_);
   git_revwalk_sorting(walk, GIT_SORT_TOPOLOGICAL | GIT_SORT_TIME);
   git_revwalk_push_head(walk);
   git_revwalk_hide_glob(walk, "tags/*");
   git_oid oid;
+  
+  QList<QPair<QDateTime, GitCommitPtr> > l;
   while (git_revwalk_next(&oid, walk) == 0) {
     git_commit* c;
     git_commit_lookup(&c, repo_, &oid);
-    qDebug() << git_commit_time(c);
-    git_commit_free(c);
+
+    GitCommitPtr cp(new GitCommit(c));
+    QDateTime t = QDateTime::fromMSecsSinceEpoch(0);
+    l << QPair<QDateTime, GitCommitPtr>(t, cp);
   }
   git_revwalk_free(walk);
+  return l;
 }
 
 bool GitRepository::openRepository() {
@@ -176,3 +181,12 @@ void GitIndex::removeFile(const QString& f) {
     if (!gitErrorCheck(error)) return;
   }
 }
+
+GitCommit::GitCommit(git_commit* c) : commit_(c) {
+}
+
+GitCommit::~GitCommit() {
+  git_commit_free(commit_);
+}
+
+
