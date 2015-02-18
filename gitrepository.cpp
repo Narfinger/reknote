@@ -70,7 +70,7 @@ bool GitRepository::commitIndex(git_index* index) {
   return true;
 }
 
-QList<QPair<QDateTime, GitCommitPtr> > GitRepository::walkHistory() {
+const QList<GitCommitPtr> GitRepository::walkHistory() const {
   git_revwalk *walk;
   git_revwalk_new(&walk, repo_);
   git_revwalk_sorting(walk, GIT_SORT_TOPOLOGICAL | GIT_SORT_TIME);
@@ -78,14 +78,13 @@ QList<QPair<QDateTime, GitCommitPtr> > GitRepository::walkHistory() {
   git_revwalk_hide_glob(walk, "tags/*");
   git_oid oid;
   
-  QList<QPair<QDateTime, GitCommitPtr> > l;
+  QList<GitCommitPtr> l;
   while (git_revwalk_next(&oid, walk) == 0) {
     git_commit* c;
     git_commit_lookup(&c, repo_, &oid);
 
     GitCommitPtr cp(new GitCommit(c));
-    QDateTime t = QDateTime::fromMSecsSinceEpoch(0);
-    l << QPair<QDateTime, GitCommitPtr>(t, cp);
+    l << cp;
   }
   git_revwalk_free(walk);
   return l;
@@ -120,7 +119,7 @@ void GitRepository::createRepository() {
   git_tree_free(tree);
 }
 
-GitIndex::GitIndex(QSharedPointer<GitRepository> r): repo_(r) {
+GitIndex::GitIndex(GitRepositoryPtr r): repo_(r) {
   int error = git_repository_index(&index_, repo_->repo_);
   if (error <0) index_ = nullptr;
 }
@@ -189,4 +188,8 @@ GitCommit::~GitCommit() {
   git_commit_free(commit_);
 }
 
-
+const QDateTime GitCommit::time() const {
+  QDateTime t;
+  t.setTime_t(git_commit_time(commit_));
+  return t;
+}

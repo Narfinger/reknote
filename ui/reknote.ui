@@ -101,7 +101,7 @@
      <x>0</x>
      <y>0</y>
      <width>698</width>
-     <height>20</height>
+     <height>29</height>
     </rect>
    </property>
   </widget>
@@ -121,6 +121,7 @@
    <addaction name="actionDeleteNote"/>
    <addaction name="actionCleanDone"/>
    <addaction name="actionUndo"/>
+   <addaction name="actionHistory"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAddSpike">
@@ -184,6 +185,15 @@
    </property>
    <property name="text">
     <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionHistory">
+   <property name="icon">
+    <iconset resource="../images/res.qrc">
+     <normaloff>:/icons/knotes_48.png</normaloff>:/icons/knotes_48.png</iconset>
+   </property>
+   <property name="text">
+    <string>History</string>
    </property>
   </action>
  </widget>

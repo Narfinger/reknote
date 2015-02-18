@@ -15,7 +15,7 @@ include_directories(${LIBGIT2_INCLUDE_DIR})
 
 set(reknote_SRCS 
   gitrepository.cpp
-  history.cpp
+  historydialog.cpp
   noteitemdelegate.cpp
   notecommands.cpp
   noteview.cpp 

@@ -1,6 +1,7 @@
 #ifndef GITWRAPPER_H
 #define GITWRAPPER_H
 
+#include <QDateTime>
 #include <QDebug>
 #include <QtCore/QMutex>
 #include <QSharedPointer>
@@ -16,9 +17,11 @@ class Spike;
 class SpikesTreeModel;
 class GitIndex;
 class GitCommit;
+class GitRepository;
 
-
+typedef QSharedPointer<GitRepository> GitRepositoryPtr;
 typedef QSharedPointer<GitCommit> GitCommitPtr;
+typedef QSharedPointer<GitIndex> GitIndexPtr;
 
 class GitRepository {
   friend class GitIndex;
@@ -26,7 +29,7 @@ public:
   GitRepository(const QString& repo);
   ~GitRepository();
   bool commitIndex(GitIndex& index);
-  QList<QPair<QDateTime, GitCommitPtr> > walkHistory();
+  const QList<GitCommitPtr> walkHistory() const;
 
 private:
   static QMutex gitMutex;
@@ -42,7 +45,7 @@ private:
 class GitIndex {
   friend class GitRepository;
 public:
-  GitIndex(QSharedPointer<GitRepository> r);
+  GitIndex(GitRepositoryPtr r);
   ~GitIndex() { git_index_free(index_); };
   const git_index* index() const { return index_; };	//don't delete this index, it will break
   void add(const QSharedPointer<Spike>& s);
@@ -54,7 +57,7 @@ public:
 
 private:
   GitIndex() {};
-  QSharedPointer<GitRepository> repo_;
+  GitRepositoryPtr repo_;
   git_index* index_;
 };
 
@@ -62,6 +65,7 @@ class GitCommit {
 public:
   GitCommit(git_commit* c);
   ~GitCommit();
+  const QDateTime time() const;
   
 private:
   GitCommit() {};

@@ -41,9 +41,11 @@ class SpikesTreeModel : public QStandardItemModel
 public:  
     SpikesTreeModel(QObject *parent = nullptr);
     ~SpikesTreeModel();
-   
+
     void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const;
+    GitRepositoryPtr getGitRepositoryPtr() { return repo_; };
+
     void appendRow(QStandardItem* i, SpikePtr p);
     void removeItemAtIndex(const QModelIndex& index);
     const SpikePtr getPointerFromIndex(const QModelIndex& index) const;
@@ -70,7 +72,7 @@ signals:
   
 private:
   QList<SpikePtr> s_;
-  QSharedPointer<GitRepository> repo_;
+  GitRepositoryPtr repo_;
   QSet<SpikePtr> commit_;
   bool commitmodel_ = false;
   QTimer committimer_;

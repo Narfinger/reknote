@@ -6,7 +6,7 @@
 #include <QUndoView>
 
 
-#include "history.h"
+#include "historydialog.h"
 #include "reknote.h"
 
 #include "gitrepository.h"
@@ -111,8 +111,8 @@ void Reknote::deleteNote() {
 }
 
 void Reknote::showHistory() {
-  History d(this);
-  d.exec();
+  HistoryDialog d(sm_->getGitRepositoryPtr(), this);
+  int result = d.exec();
 }
 
 void Reknote::spikestreeContextMenu(const QPoint& point) const {
