@@ -38,8 +38,6 @@ SpikesTreeModel::SpikesTreeModel(QObject* parent) : QStandardItemModel(parent),
   //setup commit times
   committimer_.setSingleShot(true);
   connect(&committimer_, &QTimer::timeout, this, &SpikesTreeModel::commit);
-  
-  repo_->walkHistory();
 }
 
 SpikesTreeModel::~SpikesTreeModel() {
@@ -81,7 +79,7 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
     connect(p.data(), &Spike::saved, [=]() { this->changed(pos); });
-     
+
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();
       loadXml(children, it);
@@ -89,7 +87,12 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
   }
 }
 
+void SpikesTreeModel::loadGitCommit(const GitCommitPtr commit) {
+  
+}
+
 void SpikesTreeModel::save() {
+  if (readOnly_) return;
   QString path = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0);
   QDir dir(path);
   if (!dir.exists()) QDir().mkdir(path);
@@ -101,13 +104,14 @@ void SpikesTreeModel::save() {
   QDomElement e = d.createElement("spikes");
   saveChildrenToXml(d, e, invisibleRootItem());
   d.appendChild(e);
-  
+
   out << d.toString();
   out.flush();  
   file.close();
 }
 
 void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const {
+  if (readOnly_) return;
   if (item->hasChildren()) {
     for(int i=0; i< item->rowCount(); ++i) {
       QStandardItem* it = item->child(i);
@@ -120,6 +124,7 @@ void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QSta
 }
 
 void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
+  if (readOnly_) return;
   i->setData(s_.size(), SpikesTreeModel::modelindexrole);
   s_.push_back(p);
   QStandardItemModel::appendRow(i);
@@ -128,6 +133,7 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
 }
 
 void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
+  if (readOnly_) return;
   QStandardItem* it = itemFromIndex(index);
   QStandardItem* pit = it->parent();
   if(pit==nullptr) {
@@ -158,6 +164,7 @@ const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) co
 }
 
 void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
+  if (readOnly_) return;
   const int r = data(item->index(), SpikesTreeModel::modelindexrole).toInt();
   const SpikePtr s = s_.at(r);
   const QString name = data(item->index()).toString();
@@ -173,6 +180,7 @@ Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
 }
 
 bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
+  if (readOnly_) return true;
   if (action == Qt::IgnoreAction) return true;
   if (data->hasFormat("text/note")) {
     if (row != -1 || column != -1) return false;  //otherwise the parent is not the correct index
@@ -196,12 +204,14 @@ bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
 
 
 void SpikesTreeModel::cleanDone() {
+  if (readOnly_) return;
   for(SpikePtr& p : s_) {
     p->cleanDone();
   }
 }
 
 void SpikesTreeModel::changed(const int index) {
+  if (readOnly_) return;
   emit commit_waiting();
   if(index == -1) {
     commitmodel_ = true;
@@ -214,6 +224,7 @@ void SpikesTreeModel::changed(const int index) {
 }
 
 void SpikesTreeModel::commit() {
+  if (readOnly_) return;
   qDebug() << "commit" << "commit myself:" << commitmodel_ << "size" << commit_.size();
   GitIndex i(repo_);
   for(const SpikePtr& s : commit_) {

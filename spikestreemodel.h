@@ -33,6 +33,7 @@
 #include "spike.h"
 
 class GitRepository;
+class GitCommit;
 
 class SpikesTreeModel : public QStandardItemModel
 {
@@ -42,7 +43,8 @@ public:
     SpikesTreeModel(QObject *parent = nullptr);
     ~SpikesTreeModel();
 
-    void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
+    void loadXml(QDomNodeList& list, QStandardItem* parentItem);
+    void loadGitCommit(const QSharedPointer<GitCommit> commit);
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const;
     GitRepositoryPtr getGitRepositoryPtr() { return repo_; };
 
@@ -73,6 +75,7 @@ signals:
 private:
   QList<SpikePtr> s_;
   GitRepositoryPtr repo_;
+  bool readOnly_ = false;
   QSet<SpikePtr> commit_;
   bool commitmodel_ = false;
   QTimer committimer_;

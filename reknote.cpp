@@ -111,6 +111,10 @@ void Reknote::deleteNote() {
 }
 
 void Reknote::showHistory() {
+  const QModelIndexList li = ui.spikestreeview->selectionModel()->selectedIndexes();
+  if (li.isEmpty()) return;
+  const QModelIndex i = li.first();
+  if (!i.isValid()) return;
   HistoryDialog d(sm_->getGitRepositoryPtr(), this);
   int result = d.exec();
 }
