@@ -70,7 +70,7 @@ bool GitRepository::commitIndex(git_index* index) {
   return true;
 }
 
-const QList<GitCommitPtr> GitRepository::walkHistory() const {
+const QList<GitCommitPtr> GitRepository::walkHistory(GitRepositoryPtr repo) const {
   git_revwalk *walk;
   git_revwalk_new(&walk, repo_);
   git_revwalk_sorting(walk, GIT_SORT_TOPOLOGICAL | GIT_SORT_TIME);
@@ -83,7 +83,7 @@ const QList<GitCommitPtr> GitRepository::walkHistory() const {
     git_commit* c;
     git_commit_lookup(&c, repo_, &oid);
 
-    GitCommitPtr cp(new GitCommit(c));
+    GitCommitPtr cp(new GitCommit(c, repo));
     l << cp;
   }
   git_revwalk_free(walk);
@@ -181,7 +181,7 @@ void GitIndex::removeFile(const QString& f) {
   }
 }
 
-GitCommit::GitCommit(git_commit* c) : commit_(c) {
+GitCommit::GitCommit(git_commit* c, GitRepositoryPtr repo) : commit_(c), repo_(repo) {
 }
 
 GitCommit::~GitCommit() {
@@ -193,3 +193,34 @@ const QDateTime GitCommit::time() const {
   t.setTime_t(git_commit_time(commit_));
   return t;
 }
+
+const QString GitCommit::file(const QString& filename) const {
+  git_tree_entry* entry = nullptr;
+  git_tree* tree = nullptr;
+  int error = git_commit_tree(&tree, commit_);
+  gitErrorCheck(error);
+  
+  error = git_tree_entry_bypath(&entry, tree, "spikestree.xml");
+  gitErrorCheck(error);
+  const git_oid* oid = git_tree_entry_id(entry);
+  git_blob* blob = nullptr;
+  error = git_blob_lookup(&blob, repo_->repo_, oid);
+  gitErrorCheck(error);
+  const void* raw = git_blob_rawcontent(blob);
+  const int size = git_blob_rawsize(blob);
+  
+  //read buffer
+  const QString result = readBuffer(raw, size);
+  
+
+  git_tree_free(tree);
+  git_blob_free(blob);
+  
+  return result;
+}
+
+const QString GitCommit::readBuffer(const void* buf, const int size) const {
+  const QByteArray ba((char*)buf, size);
+  return QString(ba);
+}
+

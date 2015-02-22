@@ -25,11 +25,12 @@ typedef QSharedPointer<GitIndex> GitIndexPtr;
 
 class GitRepository {
   friend class GitIndex;
+  friend class GitCommit;
 public:
   GitRepository(const QString& repo);
   ~GitRepository();
   bool commitIndex(GitIndex& index);
-  const QList<GitCommitPtr> walkHistory() const;
+  const QList<GitCommitPtr> walkHistory(GitRepositoryPtr) const; //for some reason we don't know ourselfes
 
 private:
   static QMutex gitMutex;
@@ -63,13 +64,16 @@ private:
 
 class GitCommit {
 public:
-  GitCommit(git_commit* c);
+  GitCommit(git_commit* c, GitRepositoryPtr repo);
   ~GitCommit();
   const QDateTime time() const;
+  const QString file(const QString& filename) const;
   
 private:
   GitCommit() {};
   git_commit* commit_;
+  GitRepositoryPtr repo_;
+  const QString readBuffer(const void*, const int size) const; //rawcontent and size
 };
 
 static void gitErrorHandling() {

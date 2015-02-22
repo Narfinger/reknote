@@ -35,6 +35,9 @@ public:
 private:
     GitRepositoryPtr repo_;
     Ui::HistoryDialog ui_;
+    QList<GitCommitPtr> history_;
+
+    void changeDate(const int row);
 };
 
 #endif // HISTORY_H

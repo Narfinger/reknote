@@ -22,9 +22,17 @@
 
 HistoryDialog::HistoryDialog(GitRepositoryPtr repo, QWidget* parent): repo_(repo), QDialog(parent) {
   ui_.setupUi(this);
-  
-  const QList<GitCommitPtr> history = repo_->walkHistory();
-  for(GitCommitPtr p: history) {
+
+  history_ = repo_->walkHistory(repo_);
+  for(GitCommitPtr p: history_) {
     ui_.dateList->addItem(p->time().toString(Qt::ISODate));
   }
+
+  connect(ui_.dateList, &QListWidget::currentRowChanged, this, &HistoryDialog::changeDate);
 }
+
+void HistoryDialog::changeDate(const int row) {
+  const QString file = history_.at(row)->file("CURRENTLY IGNORED");
+  ui_.textEdit->setText(file);
+}
+
