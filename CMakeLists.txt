@@ -14,6 +14,7 @@ find_package(Libgit2 REQUIRED)
 include_directories(${LIBGIT2_INCLUDE_DIR})
 
 set(reknote_SRCS 
+  gitcommit.cpp
   gitrepository.cpp
   historydialog.cpp
   noteitemdelegate.cpp

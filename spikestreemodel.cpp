@@ -25,6 +25,7 @@
 #include <QDataStream>
 #include <QTextStream>
 
+#include "gitcommit.h"
 #include "gitrepository.h"
 #include "spikestreemodel.h"
 

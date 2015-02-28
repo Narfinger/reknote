@@ -62,20 +62,6 @@ private:
   git_index* index_;
 };
 
-class GitCommit {
-public:
-  GitCommit(git_commit* c, GitRepositoryPtr repo);
-  ~GitCommit();
-  const QDateTime time() const;
-  const QString file(const QString& filename) const;
-  
-private:
-  GitCommit() {};
-  git_commit* commit_;
-  GitRepositoryPtr repo_;
-  const QString readBuffer(const void*, const int size) const; //rawcontent and size
-};
-
 static void gitErrorHandling() {
     const git_error *e = giterr_last();
     qDebug() << "Error in git (error,class,message)" << e->klass << e->message;

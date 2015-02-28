@@ -18,6 +18,7 @@
  */
 #include <QStandardItem>
 
+#include "gitcommit.h"
 #include "historydialog.h"
 #include "spikestreemodel.h"
 
