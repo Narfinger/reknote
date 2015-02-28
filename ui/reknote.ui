@@ -201,7 +201,7 @@
   <customwidget>
    <class>NoteView</class>
    <extends>QListView</extends>
-   <header>noteview.h</header>
+   <header>src/noteview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
