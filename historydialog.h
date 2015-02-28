@@ -36,6 +36,7 @@ private:
     GitRepositoryPtr repo_;
     Ui::HistoryDialog ui_;
     QList<GitCommitPtr> history_;
+    QSharedPointer<SpikesTreeModel> stm_;
 
     void changeDate(const int row);
 };

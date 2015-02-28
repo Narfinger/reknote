@@ -43,7 +43,7 @@ public:
     SpikesTreeModel(QObject *parent = nullptr);
     ~SpikesTreeModel();
 
-    void loadXml(QDomNodeList& list, QStandardItem* parentItem);
+    void loadXml(const QDomNodeList& list, QStandardItem* parentItem);
     void loadGitCommit(const QSharedPointer<GitCommit> commit);
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const;
     GitRepositoryPtr getGitRepositoryPtr() { return repo_; };
@@ -56,6 +56,7 @@ public:
     Qt::DropActions supportedDropActions() const override { return Qt::MoveAction; };  
     QStringList mimeTypes() const override  { return QStringList("text/note"); };
     bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) override;
+    void clear() override { readOnly_ = false; QStandardItemModel::clear(); };
     
     static const int modelindexrole;
     

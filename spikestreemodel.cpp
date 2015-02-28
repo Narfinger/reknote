@@ -67,7 +67,7 @@ void SpikesTreeModel::load() {
   connect(this, &SpikesTreeModel::itemChanged, this, [=]() {this->changed(-1); }); //if we finished loading we can add this signal
 }
 
-void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
+void SpikesTreeModel::loadXml(const QDomNodeList& list, QStandardItem* parentItem) {
   for(int i=0; i< list.size(); ++i) {
     const QDomNode node(list.at(i));
     QString name = node.attributes().namedItem("name").toAttr().value();
@@ -88,7 +88,16 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
 }
 
 void SpikesTreeModel::loadGitCommit(const GitCommitPtr commit) {
+  const QString spiketree = commit->file("spikestree.xml");
   
+  QDomDocument doc;
+  QString error;
+  int errorline;
+  int errorcolumn;
+  doc.setContent(spiketree, false, &error, &errorline, &errorcolumn);
+  QDomNodeList spikelist = doc.elementsByTagName("spikes").at(0).childNodes();
+  loadXml(spikelist, invisibleRootItem());
+  readOnly_ = true;
 }
 
 void SpikesTreeModel::save() {
@@ -156,7 +165,6 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   rindex.commit();
   emit commit_done();
 }
-
 
 const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
   const int r = data(index, SpikesTreeModel::modelindexrole).toInt();
