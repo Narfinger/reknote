@@ -10,7 +10,7 @@
 QMutex GitRepository::gitMutex;
 
 GitRepository::GitRepository(const QString& repo) : repodirba_(repo.toUtf8()), repodir_(repodirba_.data()) {
-  git_threads_init();
+  git_libgit2_init();
   QMutexLocker l(&gitMutex);
   int error = git_repository_open(&repo_, repodir_);
   if(error <0) {
@@ -23,7 +23,7 @@ GitRepository::GitRepository(const QString& repo) : repodirba_(repo.toUtf8()), r
 
 GitRepository::~GitRepository() {
   git_repository_free(repo_); 
-  git_threads_shutdown();
+  git_libgit2_shutdown();
 }
 
 bool GitRepository::commitIndex(GitIndex& index) {
