@@ -10,7 +10,7 @@ set(CMAKE_AUTOMOC ON)
 
 #libgit2
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-find_package(Libgit2 REQUIRED)
+find_package(Libgit2 0.22.1 REQUIRED)
 include_directories(${LIBGIT2_INCLUDE_DIR})
 
 set(reknote_SRCS 
