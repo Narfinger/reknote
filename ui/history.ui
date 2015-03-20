@@ -53,8 +53,11 @@
      <pointsize>12</pointsize>
     </font>
    </property>
+   <property name="dragEnabled">
+    <bool>false</bool>
+   </property>
    <property name="dragDropMode">
-    <enum>QAbstractItemView::DragDrop</enum>
+    <enum>QAbstractItemView::NoDragDrop</enum>
    </property>
    <property name="defaultDropAction">
     <enum>Qt::MoveAction</enum>
