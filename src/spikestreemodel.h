@@ -46,7 +46,7 @@ public:
     void loadXml(const QDomNodeList& list, QStandardItem* parentItem);
     void loadGitCommit(const QSharedPointer<GitCommit> commit);
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const;
-    GitRepositoryPtr getGitRepositoryPtr() { return repo_; };
+    GitRepositoryPtr getGitRepositoryPtr() const { return repo_; };
 
     void appendRow(QStandardItem* i, SpikePtr p);
     void removeItemAtIndex(const QModelIndex& index);

@@ -14,7 +14,7 @@ class Reknote : public QMainWindow {
 Q_OBJECT
 private:
   Ui::MainWindow ui;
-  SpikesTreeModel* sm_;
+
 
 public:
   Reknote();
@@ -25,16 +25,14 @@ private:
   QLabel* sbarIcon;
   
 private slots:
-  void selectIndex(const QModelIndex& index);
-  void addSpike();
-  void deleteSelectedSpike(); 
-  void deleteNote();
+  void addSpike()  		{ statusBar()->showMessage("Added", 1*1000); ui.spikenotewidget->addSpike(); }
+  void deleteSelectedSpike()  	{ ui.spikenotewidget->deleteSelectedSpike(); }
+  void deleteNote()  		{ ui.spikenotewidget->deleteNote(); }
   void showHistory();
-  void spikestreeContextMenu(const QPoint&) const;
-  void activated(QModelIndex i);
+  //void spikestreeContextMenu(const QPoint&) const;
   void commitWaiting();
   void commitFinished();
-  void cleanDone();
+  void cleanDone() 		{ ui.spikenotewidget->cleanDone(); }
 };
 
 #endif // reknote_H
