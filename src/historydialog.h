@@ -33,8 +33,9 @@ public:
   HistoryDialog(GitRepositoryPtr repo, QWidget* parent = nullptr);
 
 private:
-    GitRepositoryPtr repo_;
     Ui::HistoryDialog ui_;
+
+    GitRepositoryPtr repo_;
     QList<GitCommitPtr> history_;
     QSharedPointer<SpikesTreeModel> stm_;
 

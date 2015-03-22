@@ -22,7 +22,7 @@
 #include "historydialog.h"
 #include "spikestreemodel.h"
 
-HistoryDialog::HistoryDialog(GitRepositoryPtr repo, QWidget* parent): repo_(repo), QDialog(parent) {
+HistoryDialog::HistoryDialog(GitRepositoryPtr repo, QWidget* parent): QDialog(parent), repo_(repo) {
   ui_.setupUi(this);
 
   history_ = repo_->walkHistory(repo_);
