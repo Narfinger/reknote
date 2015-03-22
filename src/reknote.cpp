@@ -51,7 +51,7 @@ Reknote::~Reknote() {
 
 void Reknote::showHistory() {
   HistoryDialog d(ui.spikenotewidget->spikestreemodel()->getGitRepositoryPtr(), this);
-  int result = d.exec();
+  d.exec();
 }
 
 

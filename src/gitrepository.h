@@ -62,12 +62,14 @@ private:
   git_index* index_;
 };
 
-static void gitErrorHandling() {
+//these two helper functions are not used in every file
+//so we declare them unused but keep the general warning
+[[gnu::unused]] static void gitErrorHandling() {
     const git_error *e = giterr_last();
     qDebug() << "Error in git (error,class,message)" << e->klass << e->message;
 }
 
-static bool gitErrorCheck(int error) {
+[[gnu::unused]] static bool gitErrorCheck(int error) {
   if(error <0) {
     gitErrorHandling();
     return false;

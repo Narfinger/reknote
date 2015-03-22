@@ -99,7 +99,7 @@ void SpikeNoteWidget::cleanDone() {
 void SpikeNoteWidget::spikestreeContextMenu(const QPoint& point) const {
   QMenu m(ui_.spikestreeview);
   m.addActions(al_);
-  QAction* a = m.exec(ui_.spikestreeview->mapToGlobal(point));
+  m.exec(ui_.spikestreeview->mapToGlobal(point));	//we don't need to call the action because it is called from main ui
 }
 
 void SpikeNoteWidget::selectIndex(const QModelIndex& index) {
