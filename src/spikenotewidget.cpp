@@ -28,32 +28,30 @@
 
 SpikeNoteWidget::SpikeNoteWidget(QWidget* parent) : QWidget(parent) {
   ui_.setupUi(this);
-  
+
   sm_ = new SpikesTreeModel(this);
-  
+
   ui_.spikestreeview->setModel(sm_);
   ui_.spikestreeview->expandAll();
   ui_.spikestreeview->header()->hide();
   connect(ui_.noteView, &NoteView::stopCommitTimer, sm_, &SpikesTreeModel::stopCommitTimer);
-  
+  connect(ui_.spikestreeview, &QAbstractItemView::customContextMenuRequested, this, &SpikeNoteWidget::spikestreeContextMenu);
+
   ui_.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
-  //connect(ui.spikestreeview, &QAbstractItemView::customContextMenuRequested, this, &Reknote::spikestreeContextMenu);
-// connect(ui.spikestreeview, &QAbstractItemView::activated, this, &Reknote::activated); //this doesnt work on my ubuntu machien
-  connect(ui_.spikestreeview, &QAbstractItemView::clicked, this, &SpikeNoteWidget::activated);
-  
-  
+  connect(ui_.spikestreeview, &QAbstractItemView::clicked, this, &SpikeNoteWidget::activated);  
+
   //restore index
   QSettings s("Foo", "reknote");
   const int row = s.value("selected-spike-row").toInt();
   const int column = s.value("selected-spike-column").toInt();
   const QModelIndex i = sm_->index(row, column);
   selectIndex(i);
-  
+
   sm_->load();
 }
 
 SpikeNoteWidget::~SpikeNoteWidget() {
-    sm_->save();
+  sm_->save();
 
   const QModelIndex i = ui_.spikestreeview->selectionModel()->currentIndex();
   QSettings s("Foo", "reknote");
@@ -69,7 +67,7 @@ void SpikeNoteWidget::addSpike() {
   sm_->appendRow(i, s);
   ui_.spikestreeview->setCurrentIndex(i->index());
   ui_.spikestreeview->edit(i->index());
-  
+
   selectIndex(i->index());
 }
 
@@ -84,7 +82,7 @@ void SpikeNoteWidget::deleteSelectedSpike() {
   QMessageBox::StandardButton res = QMessageBox::question(this, "Do you want to delete?", question);
   if (res==QMessageBox::Yes) {
     sm_->removeItemAtIndex(i);
-    
+
     const QModelIndex i = ui_.spikestreeview->selectionModel()->selectedIndexes().first();
     selectIndex(i);
   }
@@ -97,21 +95,12 @@ void SpikeNoteWidget::deleteNote() {
 void SpikeNoteWidget::cleanDone() {
   sm_->cleanDone();
 }
-/*
-void SpikeNoteWidget::spikestreeContextMenu(const QMenu& m, const QPoint& point) const {
+
+void SpikeNoteWidget::spikestreeContextMenu(const QPoint& point) const {
   QMenu m(ui_.spikestreeview);
-  m.addAction(ui.actionAddSpike);
-  m.addAction(ui.actionDeleteSpike);
-  
-  ui.actionDeleteSpike->blockSignals(true);	//we need to do something special for delete
-  QAction* a = m.exec(ui.spikestreeview->mapToGlobal(point));
-  if (a == ui.actionDeleteSpike) {
-    QModelIndex i = ui.spikestreeview->indexAt(point);
-    if (!i.isValid()) return;
-    sm_->removeItemAtIndex(i);
-  }
-  ui.actionDeleteSpike->blockSignals(false);
-}*/
+  m.addActions(al_);
+  QAction* a = m.exec(ui_.spikestreeview->mapToGlobal(point));
+}
 
 void SpikeNoteWidget::selectIndex(const QModelIndex& index) {
   ui_.spikestreeview->setCurrentIndex(index);

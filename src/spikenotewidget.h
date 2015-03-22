@@ -35,14 +35,17 @@ public:
   void deleteSelectedSpike(); 
   void deleteNote();
   void cleanDone();
-  
+  void undo() { ui_.noteView->undo(); }
+  void setSpikeActions(const QList<QAction*>& list) 	{ al_ = list; }
+  void spikestreeContextMenu(const QPoint& point) const;
   const SpikesTreeModel* spikestreemodel()  const { return sm_; }
-    
+
 private:
   Ui::SpikeNoteWidget ui_;
-    
+
   SpikesTreeModel* sm_;
-    
+  QList<QAction*> al_;
+
   void selectIndex(const QModelIndex& index);
   void activated(QModelIndex i);
 };
