@@ -22,12 +22,14 @@ set(reknote_SRCS
   src/noteview.cpp 
   src/spike.cpp 
   src/spikestreemodel.cpp 
+  src/spikenotewidget.cpp
   src/reknote.cpp 
   src/main.cpp
 )
 SET(reknote_FORMS
   ui/history.ui
   ui/reknote.ui
+  ui/spikenotewidget.ui
 )
 QT5_WRAP_UI(reknote_FORMS_HDRS ${reknote_FORMS})
 qt5_add_resources(reknote_RES "images/res.qrc")
