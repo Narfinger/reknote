@@ -28,6 +28,8 @@ class GitRepository;
 class SpikeNoteWidget : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(bool readonly READ isReadOnly WRITE setReadOnly DESIGNABLE true)
+
 public:
   SpikeNoteWidget(QWidget* parent = nullptr);
   ~SpikeNoteWidget();
@@ -39,12 +41,15 @@ public:
   void setSpikeActions(const QList<QAction*>& list) 	{ al_ = list; }
   void spikestreeContextMenu(const QPoint& point) const;
   const SpikesTreeModel* spikestreemodel()  const { return sm_; }
+  bool isReadOnly() const { return readonly_; }
+  void setReadOnly(const bool r);
 
 private:
   Ui::SpikeNoteWidget ui_;
 
   SpikesTreeModel* sm_;
   QList<QAction*> al_;
+  bool readonly_ = false;
 
   void selectIndex(const QModelIndex& index);
   void activated(QModelIndex i);

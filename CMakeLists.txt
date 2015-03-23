@@ -19,11 +19,11 @@ set(reknote_SRCS
   src/historydialog.cpp
   src/noteitemdelegate.cpp
   src/notecommands.cpp
-  src/noteview.cpp 
-  src/spike.cpp 
-  src/spikestreemodel.cpp 
+  src/noteview.cpp
+  src/spike.cpp
+  src/spikestreemodel.cpp
   src/spikenotewidget.cpp
-  src/reknote.cpp 
+  src/reknote.cpp
   src/main.cpp
 )
 SET(reknote_FORMS
