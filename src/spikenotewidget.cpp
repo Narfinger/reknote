@@ -102,6 +102,19 @@ void SpikeNoteWidget::spikestreeContextMenu(const QPoint& point) const {
   m.exec(ui_.spikestreeview->mapToGlobal(point));	//we don't need to call the action because it is called from main ui
 }
 
+void SpikeNoteWidget::setReadOnly(const bool r) {
+  ui_.noteView->setDragEnabled(false);
+  ui_.spikestreeview->setDragEnabled(r);
+  if (r) {
+    ui_.noteView->setDragDropMode(QAbstractItemView::NoDragDrop);
+    ui_.spikestreeview->setDragDropMode(QAbstractItemView::NoDragDrop);
+  } else {
+    ui_.noteView->setDragDropMode(QAbstractItemView::DragDrop);
+    ui_.spikestreeview->setDragDropMode(QAbstractItemView::DragDrop);
+  }
+}
+
+
 void SpikeNoteWidget::selectIndex(const QModelIndex& index) {
   ui_.spikestreeview->setCurrentIndex(index);
   activated(index);
