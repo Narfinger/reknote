@@ -57,7 +57,7 @@ public:
   void resetColor(const QModelIndex& index);
 
   bool removeRows(int position, int rows, const QModelIndex& parent = QModelIndex()) override;
-  QStringList mimeTypes() const override  { return QStringList("text/note"); };
+  QStringList mimeTypes() const override  { return QStringList("application/x-qabstractitemmodeldatalist") << "text/note"; };
   bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) override;
   QMimeData* mimeData(const QModelIndexList& indexes) const override;
   void cleanDone();

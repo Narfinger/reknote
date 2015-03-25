@@ -158,7 +158,7 @@ bool Spike::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, 
 }
 
 QMimeData* Spike::mimeData(const QModelIndexList& indexes) const {
-  QMimeData* m = new QMimeData();
+  QMimeData* m = QStandardItemModel::mimeData(indexes);
   QByteArray encodedData;
   QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
