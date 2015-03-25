@@ -89,8 +89,9 @@ void SpikesTreeModel::loadXml(const QDomNodeList& list, QStandardItem* parentIte
 }
 
 void SpikesTreeModel::loadGitCommit(const GitCommitPtr commit) {
+  s_.clear();
   const QString spiketree = commit->file("spikestree.xml");
-  
+
   QDomDocument doc;
   QString error;
   int errorline;
@@ -99,6 +100,11 @@ void SpikesTreeModel::loadGitCommit(const GitCommitPtr commit) {
   QDomNodeList spikelist = doc.elementsByTagName("spikes").at(0).childNodes();
   loadXml(spikelist, invisibleRootItem());
   readOnly_ = true;
+
+  //load spikes with correct data
+  for (SpikePtr s: s_) {
+    s->loadGitCommit(commit);
+  }
 }
 
 void SpikesTreeModel::save() {

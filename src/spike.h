@@ -31,6 +31,8 @@
 #include <QUuid>
 #include <QtXml/QtXml>
 
+class GitCommit;
+
 class Spike : public QStandardItemModel {
     Q_OBJECT
 public:
@@ -44,6 +46,7 @@ public:
   Qt::DropActions supportedDropActions() const override { return Qt::MoveAction; };
 
   void load();
+  void loadGitCommit(const QSharedPointer<GitCommit> commit);
 
   const QString name() const 			{ return name_; };
   void setName(const QString& name);
