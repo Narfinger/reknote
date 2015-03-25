@@ -24,6 +24,7 @@
 
 class SpikesTreeModel;
 class GitRepository;
+class GitCommit;
 
 class SpikeNoteWidget : public QWidget
 {
@@ -40,14 +41,17 @@ public:
   void undo() { ui_.noteView->undo(); }
   void setSpikeActions(const QList<QAction*>& list) 	{ al_ = list; }
   void spikestreeContextMenu(const QPoint& point) const;
-  const SpikesTreeModel* spikestreemodel()  const { return sm_; }
+  const SpikesTreeModel* spikestreemodel()  const { return stm_; }
   bool isReadOnly() const { return readonly_; }
   void setReadOnly(const bool r);
+  
+  //model functions
+  void loadGitCommit(QSharedPointer<GitCommit> commit);
 
 private:
   Ui::SpikeNoteWidget ui_;
 
-  SpikesTreeModel* sm_;
+  SpikesTreeModel* stm_;
   QList<QAction*> al_;
   bool readonly_ = false;
 

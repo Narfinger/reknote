@@ -29,16 +29,11 @@ HistoryDialog::HistoryDialog(GitRepositoryPtr repo, QWidget* parent): QDialog(pa
   for(GitCommitPtr p: history_) {
     ui_.dateList->addItem(p->time().toString(Qt::ISODate));
   }
-  stm_ = QSharedPointer<SpikesTreeModel>(new SpikesTreeModel());
-  ui_.spikestreeview->setModel(stm_.data());
-
   connect(ui_.dateList, &QListWidget::currentRowChanged, this, &HistoryDialog::changeDate);
 }
 
 void HistoryDialog::changeDate(const int row) {
-  stm_->clear();
   const QString file = history_.at(row)->file("CURRENTLY IGNORED");
   qDebug() << file;
-  stm_->loadGitCommit(history_.at(row));
+  ui_.spikenotewidget->loadGitCommit(history_.at(row));
 }
-
