@@ -22,6 +22,7 @@
 
 #include "spikenotewidget.h"
 
+#include "gitcommit.h"
 #include "gitrepository.h"
 #include "spike.h"
 #include "spikestreemodel.h"
@@ -29,12 +30,12 @@
 SpikeNoteWidget::SpikeNoteWidget(QWidget* parent) : QWidget(parent) {
   ui_.setupUi(this);
 
-  sm_ = new SpikesTreeModel(this);
+  stm_ = new SpikesTreeModel(this);
 
-  ui_.spikestreeview->setModel(sm_);
+  ui_.spikestreeview->setModel(stm_);
   ui_.spikestreeview->expandAll();
   ui_.spikestreeview->header()->hide();
-  connect(ui_.noteView, &NoteView::stopCommitTimer, sm_, &SpikesTreeModel::stopCommitTimer);
+  connect(ui_.noteView, &NoteView::stopCommitTimer, stm_, &SpikesTreeModel::stopCommitTimer);
   connect(ui_.spikestreeview, &QAbstractItemView::customContextMenuRequested, this, &SpikeNoteWidget::spikestreeContextMenu);
 
   ui_.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -44,27 +45,27 @@ SpikeNoteWidget::SpikeNoteWidget(QWidget* parent) : QWidget(parent) {
   QSettings s("Foo", "reknote");
   const int row = s.value("selected-spike-row").toInt();
   const int column = s.value("selected-spike-column").toInt();
-  const QModelIndex i = sm_->index(row, column);
+  const QModelIndex i = stm_->index(row, column);
   selectIndex(i);
 
-  sm_->load();
+  stm_->load();
 }
 
 SpikeNoteWidget::~SpikeNoteWidget() {
-  sm_->save();
+  stm_->save();
 
   const QModelIndex i = ui_.spikestreeview->selectionModel()->currentIndex();
   QSettings s("Foo", "reknote");
   s.setValue("selected-spike-row", i.row());
   s.setValue("selected-spike-column", i.column());
 
-  delete sm_;
+  delete stm_;
 }
 
 void SpikeNoteWidget::addSpike() {
   QStandardItem* i = new QStandardItem("Edit Text");
   SpikePtr s(new Spike());
-  sm_->appendRow(i, s);
+  stm_->appendRow(i, s);
   ui_.spikestreeview->setCurrentIndex(i->index());
   ui_.spikestreeview->edit(i->index());
 
@@ -76,12 +77,12 @@ void SpikeNoteWidget::deleteSelectedSpike() {
   if (li.isEmpty()) return;
   const QModelIndex i = li.first();
   if (!i.isValid()) return;  
-  const SpikePtr spike = sm_->getPointerFromIndex(i);
+  const SpikePtr spike = stm_->getPointerFromIndex(i);
   const QString question = QString("Do you want to delete Spike \"%1\",\n with directory \"%2\"").arg(
     spike->name()).arg(spike->dir());
   QMessageBox::StandardButton res = QMessageBox::question(this, "Do you want to delete?", question);
   if (res==QMessageBox::Yes) {
-    sm_->removeItemAtIndex(i);
+    stm_->removeItemAtIndex(i);
 
     const QModelIndex i = ui_.spikestreeview->selectionModel()->selectedIndexes().first();
     selectIndex(i);
@@ -93,7 +94,7 @@ void SpikeNoteWidget::deleteNote() {
 }
 
 void SpikeNoteWidget::cleanDone() {
-  sm_->cleanDone();
+  stm_->cleanDone();
 }
 
 void SpikeNoteWidget::spikestreeContextMenu(const QPoint& point) const {
@@ -114,6 +115,10 @@ void SpikeNoteWidget::setReadOnly(const bool r) {
   }
 }
 
+void SpikeNoteWidget::loadGitCommit(GitCommitPtr commit) {
+  stm_->clear();
+  stm_->loadGitCommit(commit);
+}
 
 void SpikeNoteWidget::selectIndex(const QModelIndex& index) {
   ui_.spikestreeview->setCurrentIndex(index);
@@ -121,7 +126,7 @@ void SpikeNoteWidget::selectIndex(const QModelIndex& index) {
 }
 
 void SpikeNoteWidget::activated(QModelIndex i) {
-  if (sm_->rowCount()==0) return;
-  const SpikePtr p = sm_->getPointerFromIndex(i);
+  if (stm_->rowCount()==0) return;
+  const SpikePtr p = stm_->getPointerFromIndex(i);
   ui_.noteView->setModel(p.data());
 }
