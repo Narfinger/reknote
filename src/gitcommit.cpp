@@ -37,8 +37,11 @@ const QString GitCommit::file(const QString& filename) const {
   git_tree* tree = nullptr;
   int error = git_commit_tree(&tree, commit_);
   gitErrorCheck(error);
+
+  const QByteArray ba = filename.toUtf8();
+  const char* baCString = ba.data();
   
-  error = git_tree_entry_bypath(&entry, tree, "spikestree.xml");
+  error = git_tree_entry_bypath(&entry, tree, baCString);
   gitErrorCheck(error);
   if (error < 0) return QString();
   const git_oid* oid = git_tree_entry_id(entry);
@@ -47,14 +50,14 @@ const QString GitCommit::file(const QString& filename) const {
   gitErrorCheck(error);
   const void* raw = git_blob_rawcontent(blob);
   const int size = git_blob_rawsize(blob);
-  
+
   //read buffer
   const QString result = readBuffer(raw, size);
-  
+
 
   git_tree_free(tree);
   git_blob_free(blob);
-  
+
   return result;
 }
 
