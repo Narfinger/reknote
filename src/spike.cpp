@@ -101,6 +101,19 @@ void Spike::loadGitCommit(const GitCommitPtr commit) {
   const QString dir = dir_.dirName() + "/spike.xml";
   const QString spikexml = commit->file(dir);
   qDebug() << spikexml;
+  
+  QDomDocument d(spikexml);
+  QString error;
+  //int errorline;
+  //int errorcolumn;
+  //d.setContent(&f, false, &error, &errorline, &errorcolumn);
+  if (!error.isEmpty()) { qDebug() << "error loading file" << dir_.absolutePath(); return; }
+  
+  const QDomNodeList notelist = d.elementsByTagName("note");
+  for(int i=0; i< notelist.size(); ++i)  {
+    const QDomNode n = notelist.at(i);
+    insertElement(n);
+  }
 }
 
 
