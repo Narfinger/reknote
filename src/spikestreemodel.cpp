@@ -25,6 +25,7 @@
 #include <QDataStream>
 #include <QTextStream>
 
+#include "gitcommit.h"
 #include "gitrepository.h"
 #include "spikestreemodel.h"
 
@@ -67,7 +68,7 @@ void SpikesTreeModel::load() {
   connect(this, &SpikesTreeModel::itemChanged, this, [=]() {this->changed(-1); }); //if we finished loading we can add this signal
 }
 
-void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
+void SpikesTreeModel::loadXml(const QDomNodeList& list, QStandardItem* parentItem) {
   for(int i=0; i< list.size(); ++i) {
     const QDomNode node(list.at(i));
     QString name = node.attributes().namedItem("name").toAttr().value();
@@ -79,7 +80,7 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
     const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
     connect(p.data(), &Spike::saved, [=]() { this->changed(pos); });
-     
+
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();
       loadXml(children, it);
@@ -87,7 +88,27 @@ void SpikesTreeModel::loadXml(QDomNodeList& list, QStandardItem* parentItem) {
   }
 }
 
+void SpikesTreeModel::loadGitCommit(const GitCommitPtr commit) {
+  s_.clear();
+  const QString spiketree = commit->file("spikestree.xml");
+
+  QDomDocument doc;
+  QString error;
+  int errorline;
+  int errorcolumn;
+  doc.setContent(spiketree, false, &error, &errorline, &errorcolumn);
+  QDomNodeList spikelist = doc.elementsByTagName("spikes").at(0).childNodes();
+  loadXml(spikelist, invisibleRootItem());
+  readOnly_ = true;
+
+  //load spikes with correct data
+  for (SpikePtr s: s_) {
+    s->loadGitCommit(commit);
+  }
+}
+
 void SpikesTreeModel::save() {
+  if (readOnly_) return;
   QString path = QStandardPaths::standardLocations(QStandardPaths::DataLocation).at(0);
   QDir dir(path);
   if (!dir.exists()) QDir().mkdir(path);
@@ -99,13 +120,14 @@ void SpikesTreeModel::save() {
   QDomElement e = d.createElement("spikes");
   saveChildrenToXml(d, e, invisibleRootItem());
   d.appendChild(e);
-  
+
   out << d.toString();
   out.flush();  
   file.close();
 }
 
 void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const {
+  if (readOnly_) return;
   if (item->hasChildren()) {
     for(int i=0; i< item->rowCount(); ++i) {
       QStandardItem* it = item->child(i);
@@ -118,6 +140,7 @@ void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QSta
 }
 
 void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
+  if (readOnly_) return;
   i->setData(s_.size(), SpikesTreeModel::modelindexrole);
   s_.push_back(p);
   QStandardItemModel::appendRow(i);
@@ -126,6 +149,7 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
 }
 
 void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
+  if (readOnly_) return;
   QStandardItem* it = itemFromIndex(index);
   QStandardItem* pit = it->parent();
   if(pit==nullptr) {
@@ -149,13 +173,13 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
   emit commit_done();
 }
 
-
 const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
   const int r = data(index, SpikesTreeModel::modelindexrole).toInt();
   return s_.at(r);
 }
 
 void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
+  if (readOnly_) return;
   const int r = data(item->index(), SpikesTreeModel::modelindexrole).toInt();
   const SpikePtr s = s_.at(r);
   const QString name = data(item->index()).toString();
@@ -171,6 +195,7 @@ Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
 }
 
 bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) {
+  if (readOnly_) return true;
   if (action == Qt::IgnoreAction) return true;
   if (data->hasFormat("text/note")) {
     if (row != -1 || column != -1) return false;  //otherwise the parent is not the correct index
@@ -194,12 +219,14 @@ bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
 
 
 void SpikesTreeModel::cleanDone() {
+  if (readOnly_) return;
   for(SpikePtr& p : s_) {
     p->cleanDone();
   }
 }
 
 void SpikesTreeModel::changed(const int index) {
+  if (readOnly_) return;
   emit commit_waiting();
   if(index == -1) {
     commitmodel_ = true;
@@ -212,6 +239,7 @@ void SpikesTreeModel::changed(const int index) {
 }
 
 void SpikesTreeModel::commit() {
+  if (readOnly_) return;
   qDebug() << "commit" << "commit myself:" << commitmodel_ << "size" << commit_.size();
   GitIndex i(repo_);
   for(const SpikePtr& s : commit_) {

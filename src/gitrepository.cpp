@@ -6,6 +6,7 @@
 
 #include "spike.h"
 #include "gitrepository.h"
+#include "gitcommit.h"
 
 QMutex GitRepository::gitMutex;
 
@@ -70,6 +71,26 @@ bool GitRepository::commitIndex(git_index* index) {
   return true;
 }
 
+const QList<GitCommitPtr> GitRepository::walkHistory(GitRepositoryPtr repo) const {
+  git_revwalk *walk;
+  git_revwalk_new(&walk, repo_);
+  git_revwalk_sorting(walk, GIT_SORT_TOPOLOGICAL | GIT_SORT_TIME);
+  git_revwalk_push_head(walk);
+  git_revwalk_hide_glob(walk, "tags/*");
+  git_oid oid;
+  
+  QList<GitCommitPtr> l;
+  while (git_revwalk_next(&oid, walk) == 0) {
+    git_commit* c;
+    git_commit_lookup(&c, repo_, &oid);
+
+    GitCommitPtr cp(new GitCommit(c, repo));
+    l << cp;
+  }
+  git_revwalk_free(walk);
+  return l;
+}
+
 bool GitRepository::openRepository() {
   QMutexLocker l(&gitMutex);
   int error = git_repository_open(&repo_, repodir_);
@@ -99,7 +120,7 @@ void GitRepository::createRepository() {
   git_tree_free(tree);
 }
 
-GitIndex::GitIndex(QSharedPointer<GitRepository> r): repo_(r) {
+GitIndex::GitIndex(GitRepositoryPtr r): repo_(r) {
   int error = git_repository_index(&index_, repo_->repo_);
   if (error <0) index_ = nullptr;
 }
@@ -160,3 +181,4 @@ void GitIndex::removeFile(const QString& f) {
     if (!gitErrorCheck(error)) return;
   }
 }
+

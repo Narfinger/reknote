@@ -29,6 +29,8 @@
 
 #include "spike.h"
 
+#include "gitcommit.h"
+
 const int Spike::maxdirname = 10;
 const int Spike::filepathrole = Qt::UserRole + 1;
 const int Spike::colorrole    = Qt::UserRole + 2;
@@ -94,6 +96,23 @@ void Spike::load() {
     insertElement(n);
   }
 }
+
+void Spike::loadGitCommit(const GitCommitPtr commit) {
+  clear();
+  const QString dir = dir_.dirName() + "/spike.xml";
+  const QString spikexml = commit->file(dir);
+  
+  QDomDocument d;
+  d.setContent(spikexml);
+  QString error;
+  
+  const QDomNodeList notelist = d.elementsByTagName("note");
+  for(int i=0; i< notelist.size(); ++i)  {
+    const QDomNode n = notelist.at(i);
+    insertElement(n);
+  }
+}
+
 
 void Spike::setName(const QString& name) {
   name_ = name;

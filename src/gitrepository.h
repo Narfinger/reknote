@@ -1,10 +1,13 @@
 #ifndef GITWRAPPER_H
 #define GITWRAPPER_H
 
+#include <QDateTime>
 #include <QDebug>
 #include <QtCore/QMutex>
 #include <QSharedPointer>
 #include <QString>
+
+#include <memory>
 
 extern "C" {
 #include <git2.h>
@@ -13,14 +16,21 @@ extern "C" {
 class Spike;
 class SpikesTreeModel;
 class GitIndex;
+class GitCommit;
+class GitRepository;
+
+typedef QSharedPointer<GitRepository> GitRepositoryPtr;
+typedef QSharedPointer<GitCommit> GitCommitPtr;
+typedef QSharedPointer<GitIndex> GitIndexPtr;
 
 class GitRepository {
   friend class GitIndex;
+  friend class GitCommit;
 public:
   GitRepository(const QString& repo);
   ~GitRepository();
   bool commitIndex(GitIndex& index);
-  
+  const QList<GitCommitPtr> walkHistory(GitRepositoryPtr) const; //for some reason we don't know ourselfes
 
 private:
   static QMutex gitMutex;
@@ -36,7 +46,7 @@ private:
 class GitIndex {
   friend class GitRepository;
 public:
-  GitIndex(QSharedPointer<GitRepository> r);
+  GitIndex(GitRepositoryPtr r);
   ~GitIndex() { git_index_free(index_); };
   const git_index* index() const { return index_; };	//don't delete this index, it will break
   void add(const QSharedPointer<Spike>& s);
@@ -48,16 +58,18 @@ public:
 
 private:
   GitIndex() {};
-  QSharedPointer<GitRepository> repo_;
+  GitRepositoryPtr repo_;
   git_index* index_;
 };
 
-static void gitErrorHandling() {
+//these two helper functions are not used in every file
+//so we declare them unused but keep the general warning
+[[gnu::unused]] static void gitErrorHandling() {
     const git_error *e = giterr_last();
     qDebug() << "Error in git (error,class,message)" << e->klass << e->message;
 }
 
-static bool gitErrorCheck(int error) {
+[[gnu::unused]] static bool gitErrorCheck(int error) {
   if(error <0) {
     gitErrorHandling();
     return false;

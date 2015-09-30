@@ -33,6 +33,7 @@
 #include "spike.h"
 
 class GitRepository;
+class GitCommit;
 
 class SpikesTreeModel : public QStandardItemModel
 {
@@ -41,9 +42,12 @@ class SpikesTreeModel : public QStandardItemModel
 public:  
     SpikesTreeModel(QObject *parent = nullptr);
     ~SpikesTreeModel();
-   
-    void loadXml(QDomNodeList& list, QStandardItem* parentItem); 
+
+    void loadXml(const QDomNodeList& list, QStandardItem* parentItem);
+    void loadGitCommit(const QSharedPointer<GitCommit> commit);
     void saveChildrenToXml(QDomDocument& d, QDomElement& elem, QStandardItem* item) const;
+    GitRepositoryPtr getGitRepositoryPtr() const { return repo_; };
+
     void appendRow(QStandardItem* i, SpikePtr p);
     void removeItemAtIndex(const QModelIndex& index);
     const SpikePtr getPointerFromIndex(const QModelIndex& index) const;
@@ -52,6 +56,7 @@ public:
     Qt::DropActions supportedDropActions() const override { return Qt::MoveAction; };  
     QStringList mimeTypes() const override  { return QStringList("text/note"); };
     bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) override;
+    void clear() { readOnly_ = false; QStandardItemModel::clear(); };
     
     static const int modelindexrole;
     
@@ -70,7 +75,8 @@ signals:
   
 private:
   QList<SpikePtr> s_;
-  QSharedPointer<GitRepository> repo_;
+  GitRepositoryPtr repo_;
+  bool readOnly_ = false;
   QSet<SpikePtr> commit_;
   bool commitmodel_ = false;
   QTimer committimer_;

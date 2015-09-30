@@ -25,73 +25,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="handleWidth">
-       <number>3</number>
-      </property>
-      <property name="childrenCollapsible">
-       <bool>true</bool>
-      </property>
-      <widget class="QTreeView" name="spikestreeview">
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="dragDropMode">
-        <enum>QAbstractItemView::DragDrop</enum>
-       </property>
-       <property name="defaultDropAction">
-        <enum>Qt::MoveAction</enum>
-       </property>
-       <property name="textElideMode">
-        <enum>Qt::ElideNone</enum>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="NoteView" name="noteView">
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>true</bool>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="dragEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="dragDropOverwriteMode">
-        <bool>false</bool>
-       </property>
-       <property name="dragDropMode">
-        <enum>QAbstractItemView::DragDrop</enum>
-       </property>
-       <property name="defaultDropAction">
-        <enum>Qt::MoveAction</enum>
-       </property>
-       <property name="textElideMode">
-        <enum>Qt::ElideNone</enum>
-       </property>
-       <property name="isWrapping" stdset="0">
-        <bool>false</bool>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </widget>
+     <widget class="SpikeNoteWidget" name="spikenotewidget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -121,6 +55,7 @@
    <addaction name="actionDeleteNote"/>
    <addaction name="actionCleanDone"/>
    <addaction name="actionUndo"/>
+   <addaction name="actionHistory"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAddSpike">
@@ -186,12 +121,22 @@
     <string>Redo</string>
    </property>
   </action>
+  <action name="actionHistory">
+   <property name="icon">
+    <iconset resource="../images/res.qrc">
+     <normaloff>:/icons/knotes_48.png</normaloff>:/icons/knotes_48.png</iconset>
+   </property>
+   <property name="text">
+    <string>History</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>NoteView</class>
-   <extends>QListView</extends>
-   <header>noteview.h</header>
+   <class>SpikeNoteWidget</class>
+   <extends>QWidget</extends>
+   <header>src/spikenotewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

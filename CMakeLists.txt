@@ -14,17 +14,22 @@ find_package(Libgit2 0.22.1 REQUIRED)
 include_directories(${LIBGIT2_INCLUDE_DIR})
 
 set(reknote_SRCS 
-  gitrepository.cpp
-  noteitemdelegate.cpp
-  notecommands.cpp
-  noteview.cpp 
-  spike.cpp 
-  spikestreemodel.cpp 
-  reknote.cpp 
-  main.cpp
+  src/gitcommit.cpp
+  src/gitrepository.cpp
+  src/historydialog.cpp
+  src/noteitemdelegate.cpp
+  src/notecommands.cpp
+  src/noteview.cpp
+  src/spike.cpp
+  src/spikestreemodel.cpp
+  src/spikenotewidget.cpp
+  src/reknote.cpp
+  src/main.cpp
 )
 SET(reknote_FORMS
+  ui/history.ui
   ui/reknote.ui
+  ui/spikenotewidget.ui
 )
 QT5_WRAP_UI(reknote_FORMS_HDRS ${reknote_FORMS})
 qt5_add_resources(reknote_RES "images/res.qrc")
