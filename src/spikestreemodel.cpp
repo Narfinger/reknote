@@ -200,17 +200,14 @@ bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
   if (data->hasFormat("text/note")) {
     if (row != -1 || column != -1) return false;  //otherwise the parent is not the correct index
 
-    SpikePtr s = getPointerFromIndex(parent);
-
+    SpikePtr s = getPointerFromIndex(parent); 
     QByteArray b = data->data("text/note");
-    QDataStream stream(&b, QIODevice::ReadOnly);
-    QList<QStandardItem*> l;
-    while (!stream.atEnd()) {
-      QStandardItem* item = new QStandardItem();
-      stream >> *item;
-      l << item;
-    }
-    s->appendRow(l);
+    QString t(b);
+    QStandardItem* i = new QStandardItem(t);
+    s->appendRow(i);
+    s->save();
+    save();
+    changed(s->rowCount()-1);
     return true;
   }
   if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column, parent);
