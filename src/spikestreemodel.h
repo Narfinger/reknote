@@ -62,6 +62,7 @@ public:
     
 public slots:
   void itemChangedSlot(QStandardItem* item);
+  void setDisplay(const QModelIndex& index);
 
   void load();
   void save();

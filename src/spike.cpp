@@ -192,6 +192,15 @@ void Spike::cleanDone() {
   }
 }
 
+int Spike::getTodo() const {
+  int count = 0;
+  for(QStandardItem* it : findItems("", Qt::MatchContains)) {
+    if(it->data(Qt::CheckStateRole) == Qt::Unchecked)
+      count++;
+  }
+  return count;
+}
+
 void Spike::setupSignals() {
   connect(this, &Spike::itemChanged,  this, &Spike::save);
 }

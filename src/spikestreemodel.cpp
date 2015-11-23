@@ -71,7 +71,7 @@ void SpikesTreeModel::load() {
 void SpikesTreeModel::loadXml(const QDomNodeList& list, QStandardItem* parentItem) {
   for(int i=0; i< list.size(); ++i) {
     const QDomNode node(list.at(i));
-    QString name = node.attributes().namedItem("name").toAttr().value();
+    const QString name = node.attributes().namedItem("name").toAttr().value();
     QStandardItem* it = new QStandardItem(name);
     parentItem->appendRow(it);
     SpikePtr p(new Spike(name));
@@ -80,7 +80,9 @@ void SpikesTreeModel::loadXml(const QDomNodeList& list, QStandardItem* parentIte
     const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
     connect(p.data(), &Spike::saved, [=]() { this->changed(pos); });
-
+    connect(p.data(), &Spike::dataChanged, [=](const QModelIndex & topLeft, const QModelIndex & bottomRight, 
+					       const QVector<int> & roles) {setDisplay(it->index()); });
+    setDisplay(it->index());
     if( node.hasChildNodes()) {
       QDomNodeList children = node.childNodes();
       loadXml(children, it);
@@ -131,8 +133,9 @@ void SpikesTreeModel::saveChildrenToXml(QDomDocument& d, QDomElement& elem, QSta
   if (item->hasChildren()) {
     for(int i=0; i< item->rowCount(); ++i) {
       QStandardItem* it = item->child(i);
+      const SpikePtr s = getPointerFromIndex(it->index());
       QDomElement e = d.createElement("spike");
-      e.setAttribute("name", it->text());
+      e.setAttribute("name", s->name());
       elem.appendChild(e);
       saveChildrenToXml(d, e, item->child(i));
     }
@@ -146,6 +149,7 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
   QStandardItemModel::appendRow(i);
   const int pos = s_.size() -1;
   connect(p.data(), &Spike::itemChanged, [=]() { changed(pos); });
+  //setDisplay(i->index());
 }
 
 void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
@@ -184,7 +188,19 @@ void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
   const SpikePtr s = s_.at(r);
   const QString name = data(item->index()).toString();
   s->setRelDirAndName(name);
+  
   save();
+}
+
+void SpikesTreeModel::setDisplay(const QModelIndex& index) {
+  qDebug() << "changed called";
+  const SpikePtr s = getPointerFromIndex(index);
+  const QString nn = s->name() + "  (" + QString::number(s->getTodo()) + ")";
+  qDebug() << nn;
+  blockSignals(true);
+  setData(index, nn, Qt::DisplayRole);
+  emit dataChanged(index, index);
+  blockSignals(false);
 }
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {

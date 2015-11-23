@@ -64,6 +64,7 @@ public:
   bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) override;
   QMimeData* mimeData(const QModelIndexList& indexes) const override;
   void cleanDone();
+  int getTodo() const;
 
 signals:
   void saved() const;
