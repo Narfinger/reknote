@@ -34,7 +34,7 @@ SpikeNoteWidget::SpikeNoteWidget(QWidget* parent) : QWidget(parent) {
 
   ui_.spikestreeview->setModel(stm_);
   ui_.spikestreeview->expandAll();
-  ui_.spikestreeview->header()->hide();
+  //ui_.spikestreeview->header()->hide();
   connect(ui_.noteView, &NoteView::stopCommitTimer, stm_, &SpikesTreeModel::stopCommitTimer);
   connect(ui_.spikestreeview, &QAbstractItemView::customContextMenuRequested, this, &SpikeNoteWidget::spikestreeContextMenu);
 

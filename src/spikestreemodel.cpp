@@ -79,6 +79,7 @@ void SpikesTreeModel::loadXml(const QDomNodeList& list, QStandardItem* parentIte
     s_.append(p);
     const int pos = s_.size() - 1;
     setData(it->index(), s_.size() -1, SpikesTreeModel::modelindexrole);
+    setDisplay(it->index());
     connect(p.data(), &Spike::saved, [=]() { this->changed(pos); });
     connect(p.data(), &Spike::dataChanged, [=](const QModelIndex & topLeft, const QModelIndex & bottomRight, 
 					       const QVector<int> & roles) {setDisplay(it->index()); });
@@ -149,7 +150,7 @@ void SpikesTreeModel::appendRow(QStandardItem* i, SpikePtr p) {
   QStandardItemModel::appendRow(i);
   const int pos = s_.size() -1;
   connect(p.data(), &Spike::itemChanged, [=]() { changed(pos); });
-  //setDisplay(i->index());
+  setDisplay(i->index());
 }
 
 void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
@@ -183,6 +184,7 @@ const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) co
 }
 
 void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
+  if (item->index().column()==1) return;
   if (readOnly_) return;
   const int r = data(item->index(), SpikesTreeModel::modelindexrole).toInt();
   const SpikePtr s = s_.at(r);
@@ -193,14 +195,17 @@ void SpikesTreeModel::itemChangedSlot(QStandardItem* item) {
 }
 
 void SpikesTreeModel::setDisplay(const QModelIndex& index) {
-  qDebug() << "changed called";
+  if (columnCount()==1) {
+    this->appendColumn(QList<QStandardItem*>());
+    setHeaderData(0, Qt::Horizontal, "Spike");
+    setHeaderData(0, Qt::Horizontal, "Number");
+  }
+    
   const SpikePtr s = getPointerFromIndex(index);
-  const QString nn = s->name() + "  (" + QString::number(s->getTodo()) + ")";
-  qDebug() << nn;
-  blockSignals(true);
-  setData(index, nn, Qt::DisplayRole);
-  emit dataChanged(index, index);
-  blockSignals(false);
+  const QString ns = "(" + QString::number(s->getTodo()) + ")";
+  const QModelIndex i = this->index(index.row(), index.column()+1);
+  setData(i, ns, Qt::DisplayRole);
+  emit dataChanged(i, i);
 }
 
 Qt::ItemFlags SpikesTreeModel::flags(const QModelIndex &index) const {
@@ -229,7 +234,6 @@ bool SpikesTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
   if (action == Qt::MoveAction) return QStandardItemModel::dropMimeData(data, action, row, column, parent);
   return false;
 }
-
 
 void SpikesTreeModel::cleanDone() {
   if (readOnly_) return;
