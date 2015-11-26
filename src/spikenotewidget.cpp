@@ -40,7 +40,7 @@ SpikeNoteWidget::SpikeNoteWidget(QWidget* parent) : QWidget(parent) {
 
   ui_.spikestreeview->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui_.spikestreeview, &QAbstractItemView::clicked, this, &SpikeNoteWidget::activated);  
-
+  
   //restore index
   QSettings s("Foo", "reknote");
   const int row = s.value("selected-spike-row").toInt();
@@ -49,6 +49,10 @@ SpikeNoteWidget::SpikeNoteWidget(QWidget* parent) : QWidget(parent) {
   selectIndex(i);
 
   stm_->load();
+  
+  //set sizes for columns
+  ui_.spikestreeview->resizeColumnToContents(0);
+  ui_.spikestreeview->resizeColumnToContents(1);
 }
 
 SpikeNoteWidget::~SpikeNoteWidget() {

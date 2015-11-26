@@ -198,7 +198,7 @@ void SpikesTreeModel::setDisplay(const QModelIndex& index) {
   if (columnCount()==1) {
     this->appendColumn(QList<QStandardItem*>());
     setHeaderData(0, Qt::Horizontal, "Spike");
-    setHeaderData(0, Qt::Horizontal, "Number");
+    setHeaderData(1, Qt::Horizontal, "Number");
   }
     
   const SpikePtr s = getPointerFromIndex(index);
