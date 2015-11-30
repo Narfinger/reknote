@@ -179,7 +179,10 @@ void SpikesTreeModel::removeItemAtIndex(const QModelIndex& index) {
 }
 
 const SpikePtr SpikesTreeModel::getPointerFromIndex(const QModelIndex& index) const {
-  const int r = data(index, SpikesTreeModel::modelindexrole).toInt();
+  //construct new index that is the first column
+  const QModelIndex i = this->index(index.row(), 0);
+  
+  const int r = data(i, SpikesTreeModel::modelindexrole).toInt();
   return s_.at(r);
 }
 
